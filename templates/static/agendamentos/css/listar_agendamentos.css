@@ -1,0 +1,32 @@
+.container {
+    margin-top: 50px;
+}
+
+h1 {
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.table {
+    margin-top: 20px;
+    color: #ffffff;
+    background-color: #343a40;
+}
+
+.table th, .table td {
+    color: #ffffff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.text-center {
+    margin-top: 20px;
+}

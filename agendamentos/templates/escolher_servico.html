@@ -1,0 +1,13 @@
+<!-- app agendamentos/templates/agendamentos/escolher_servico.html -->
+
+<h1>Escolher Serviço</h1>
+
+{% for servico in servicos %}
+    <div>
+        <h2>{{ servico.nome }}</h2>
+        <img src="{{ servico.foto.url }}" alt="{{ servico.nome }}">
+        <p>Preço: R$ {{ servico.preco }}</p>
+        <a href="{% url 'agendar_servico' servico.id %}" class="btn btn-primary">Agendar este serviço</a>
+    </div>
+    <hr>
+{% endfor %}

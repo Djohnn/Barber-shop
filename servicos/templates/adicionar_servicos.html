@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+
+
+
+{% block content %}
+
+    <h1>Adicionar Serviço</h1>
+    <form action="{% url 'servicos:adicionar_servicos' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required><br>
+        <br>
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" required><br>
+        <br>
+        <label for="foto">Foto:</label>
+        <input type="file" id="foto" name="foto" required><br>
+        <br>
+        <input type="submit" value="Adicionar">
+    </form>
+{% endblock  %}

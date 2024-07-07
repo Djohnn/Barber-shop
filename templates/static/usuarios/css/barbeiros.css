@@ -1,0 +1,63 @@
+/* lista_barbeiros.css */
+body {
+    background-color: inherit; /* Herda a cor de fundo do CSS principal */
+    color: inherit; /* Herda a cor de texto do CSS principal */
+}
+
+.container {
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background-color: #1e1e2f;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+li strong {
+    font-size: 1.2rem;
+    color: #f0a500;
+}
+
+li img {
+    display: block;
+    margin-top: 1rem;
+    border-radius: 50%;
+}
+
+
+
+.container {
+    background-color: inherit; /* Herda a cor de fundo do CSS principal */
+    padding: 20px;
+    color: #fff;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+}
+
+img {
+    display: block;
+    margin-top: 10px;
+}

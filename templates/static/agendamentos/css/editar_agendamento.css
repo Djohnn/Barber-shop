@@ -1,0 +1,18 @@
+/* estilização básica do formulário de edição de agendamento */
+.container {
+    margin-top: 50px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}

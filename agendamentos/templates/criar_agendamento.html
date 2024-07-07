@@ -1,0 +1,99 @@
+{% comment %} {% extends "cliente_base.html" %} {% endcomment %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2>Novo Agendamento</h2>
+            <form method="post">{% csrf_token %}
+                
+                <label for="servico">Serviço:</label>
+                {% if servico_selecionado %}
+                <input type="hidden" name="servico" value="{{ servico_selecionado.id }}">
+                <p>{{ servico_selecionado.nome }}</p>
+                <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-secondary">Escolha outro serviço</a>
+                {% else %}
+                <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary">Escolha um serviço</a>
+                {% endif %}
+                <br>
+
+                <label for="barbeiro">Barbeiro:</label>
+                <select id="barbeiro" name="barbeiro" class="form-control">
+                    <option value="">Escolha um barbeiro</option>
+                    {% for barbeiro in barbeiros %}
+                    <option value="{{ barbeiro.id }}">{{ barbeiro.nome }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" class="form-control" required>
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" class="form-control" required>
+                <br>
+
+                <button type="submit" class="btn btn-success">Agendar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "cliente_base.html" %}
+
+
+{% block 'head' %}
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block 'body' %}
+
+
+<div class="container">
+  <div class="row justify-content-center">  <div class="col-md-8">
+    <h2>Novo Agendamento</h2>
+    <form method="post">{% csrf_token %}
+        
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" class="form-control" required>
+    
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" name="hora" class="form-control" required>
+    
+        <br>
+        <label for="servico">Serviço:</label>
+        <select name="servico" id="servico">
+        <option value="">Escolha o servico</option>
+            {% for servico in servicos %}
+                <option value="{{ servico.id }}">{{ servico.nome }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="barbeiro">Barbeiro:</label>
+        <select id="barbeiro" name="barbeiro" class="form-control">
+        <option value="">Escolha um barbeiro</option>
+        {% for barbeiro in barbeiros %}
+            <option value="{{ barbeiro.id }}">{{ barbeiro.nome }}</option>
+        {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-success">Agendar</button>
+        
+    </form>
+    
+  </div>
+</div>
+{% endblock %} {% endcomment %}

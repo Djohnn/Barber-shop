@@ -1,0 +1,50 @@
+<!-- No arquivo listar_barbeiros.html dentro da pasta templates da sua aplicação -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'usuarios/css/barbeiros.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Lista de Barbeiros</h1>
+    <ul>
+        {% for barbeiro in barbeiros %}
+            <li>
+                <strong>{{ barbeiro.nome }}</strong><br>
+                Especialização: {{ barbeiro.especializacao }}<br>
+                Bio: {{ barbeiro.bio }}<br>
+                {% if barbeiro.foto %}
+                    <img src="{{ barbeiro.foto.url }}" alt="Foto de {{ barbeiro.nome }}" width="200" height="200">
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>Nenhum barbeiro cadastrado.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} <div class='container'>
+    <h1>Lista de Barbeiros</h1>
+    
+    <ul>
+        {% for barbeiro in barbeiros %}
+            <li>
+                <strong>{{ barbeiro.nome }}</strong><br>
+                Especialização: {{ barbeiro.especializacao }}<br>
+                Bio: {{ barbeiro.bio }}<br>
+                {% if barbeiro.foto %}
+                    <img src="{{ barbeiro.foto.url }}" alt="Foto de {{ barbeiro.nome }}" width="100">
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>Nenhum barbeiro cadastrado.</li>
+        {% endfor %}
+    </ul>
+
+ {% endcomment %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+
+
+
+{% block title %}Escolha um Serviço{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Escolha um Serviço</h2>
+    <div class="row">
+        {% for servico in servicos %}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ servico.foto.url }}" class="card-img-top" alt="{{ servico.nome }}" width='200' height='200'>
+                <div class="card-body">
+                    <h5 class="card-title">{{ servico.nome }}</h5>
+                    <p class="card-text">{{ servico.preco }}</p>
+                    <a href="{% url 'agendamentos:criar_agendamento' %}?servico={{ servico.id }}" class="btn btn-primary">Selecionar</a>
+                    {% comment %} <a href="{% url 'agendamentos:agendamentos:criar_agendamento' %}?servico={{ servico.id }}" class="btn btn-primary">Selecionar</a> {% endcomment %}
+                    {% comment %} <a href="{% url 'agendamentos:criar_agendamento' %}?servico={{ servico.id }}" class="btn btn-primary">Selecionar</a> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% block content %}
+<div class="container">
+    {% if messages %}
+    <br>
+    {% for message in messages%}
+        <div class="alert {{message.tags}}">{{message}}</div>
+    {% endfor%}
+    {% endif %}
+    <h1>Lista de Serviços</h1>
+    <a href="{% url 'adicionar_servico' %}">Adicionar Serviço</a>
+    <ul>
+        {% for servico in servicos %}
+            <li>
+                <h2>{{ servico.nome }}</h2>
+                <p>Preço: {{ servico.preco }}</p>
+                <img src="{{ servico.foto.url }}" alt="{{ servico.nome }}" width="100" height="100">
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %} {% endcomment %}
+
+
