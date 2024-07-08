@@ -1,0 +1,202 @@
+proximos passos do nosso app
+so lembrando que temos app usuarios, cliente, servicos, estoque:produtos, agendamentos
+
+o relacionamento de comportamento dos dois app você escolhe
+como fazer, porem um uma observação sem Formulário django, vamos usar somentes views models
+
+Dividindo em 2 Apps:
+
+Para melhor organização e modularidade, vamos dividir o sistema em 2 aplicativos:
+
+1. App vendas:
+
+Funcionalidades:
+Gerenciamento de vendas: criação, consulta, atualização e exclusão de vendas.
+Cálculo do valor total da venda, incluindo produtos e desconto.
+Aplicação de desconto à venda (valor fixo ou porcentagem).
+Finalização da venda e envio para o caixa.
+Cálculo da comissão do barbeiro automaticamente.
+
+Modelos:
+Venda:{
+agendamento:Relacionamento com o agendamento ao qual a venda se refere, no agendamento automaticamente
+vai me trazer o valor do serviço agendado.
+Produtos: Lista de produtos no estoque (produtos, quantidades, valores).
+desconto: Valor do desconto aplicado (pode ser nulo).
+valor_total: Valor total da venda (calculado automaticamente).
+data_hora_venda: Data e hora da finalização da venda.
+status_pagamento: Status da venda ("Em Aberto", "Pago", "Cancelado").
+comprovante_pix: Hash do comprovante de pagamento Pix (opcional).
+barbeiro: Relacionamento com o modelo Barbeiro para identificar o profissional que realizou o serviço.
+valor_comissao: Valor da comissão do barbeiro (calculado automaticamente).}
+
+Views:App vendas:{
+1. lista_de_vendas(request):
+Lista as vendas em aberto (status "Em Aberto").
+Exibe detalhes como agendamento, produto,, serviço valor total e status.
+Permite filtrar por barbeiro (se necessário).
+
+2. detalhes_vendas(request, pk):
+Mostra os detalhes de uma venda específica (identificada por pk).
+Exibe informações como agendamento, itens, valor total, desconto, status, forma de pagamento e comprovante Pix (se disponível).
+Permite visualizar o valor da comissão do barbeiro.
+
+3. criar_venda(request):
+Permite ao caixa criar uma nova venda.
+O usuário deve selecionar o agendamento, adicionar produtos (catálogo e quantidade), aplicar desconto (valor fixo ou porcentagem) e escolher a forma de pagamento.
+O sistema calcula o valor total da venda e a comissão do barbeiro automaticamente.
+Se o pagamento for via Pix, gera um QR Code Pix único para a venda.
+Finaliza a venda, atualiza o status do agendamento e envia a venda para o caixa.
+
+4. aplicar_pagamento_pix(request, pk):
+Processa o pagamento via Pix para uma venda específica (identificada por pk).
+Valida o pagamento usando o QR Code Pix ou outra forma de confirmação.
+Atualiza o status da venda para "Pago" e registra o pagamento da comissão ao barbeiro.
+}
+
+Templates:
+
+lista_de_vendas.html: Lista as vendas em aberto com links para detalhes.
+detalhes_vendas.html: Mostra os detalhes de uma venda específica (itens, valores, desconto).
+criar_venda.html: Formulário para criação de nova venda (agendamento, serviço, produtos, desconto, desconto: opção de vai ser em valor ou Porcentagem, valor total, forma de pagamento).
+
+
+Visões:
+lista_venda: Lista as vendas em aberto (a serem pagas).
+detalhe_venda: Mostra os detalhes de uma venda específica, incluindo o valor da comissão do barbeiro.
+criar_venda: Permite ao caixa criar uma nova venda, incluindo a seleção de produtos, aplicação de desconto e cálculo do valor total e da comissão do barbeiro.
+venda_marcar_pago: Processa o pagamento via Pix, atualiza o status da venda e registra o pagamento da comissão ao barbeiro.
+desconto:Pode ser em reais ou porcentagem Valor do desconto aplicado (pode ser nulo).
+valor_total: Valor total da venda (calculado automaticamente).
+data_hora_venda: Data e hora da finalização da venda.
+status_pagamento: Status da venda ("Em Aberto", "Pago").
+comprovante_pix: Hash do comprovante de pagamento Pix (opcional).
+
+
+2. App caixa:{
+Funcionalidades:
+Visualização das vendas finalizadas enviadas pelo app vendas.
+Exibir os detalhes da venda (Cliente, serviço, Produto, valores, desconto).
+Permitir diferentes formas de pagamento (dinheiro, cartão debito, cartão credito, pix).
+Registrar o pagamento e atualizar o status da venda para "Pago".
+Integração com QR Code Pix para facilitar o recebimento de pagamentos.
+}
+
+Modelos:
+Sem modelos específicos para este app, pois utiliza os modelos do app vendas.
+Visões:
+caixa: Tela para o caixa registrar o pagamento da venda, exibindo os detalhes da venda, as formas de pagamento e permitindo a seleção da forma de pagamento e o registro do pagamento.
+
+
+Editar modelo barbeiro:
+class Barbeiro(models.Model):
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, related_name='barbeiro_profile')
+    bio = models.TextField(blank=True)
+    especializacao = models.CharField(max_length=50, blank=True)
+    foto = models.ImageField(upload_to='barbeiros', blank=True)
+    nome = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nome
+
+comissao_porcentagem: Porcentagem da comissão do barbeiro.
+saldo_comissao: Saldo da comissão acumulada do barbeiro.
+Comissao (opcional):
+venda: Relacionamento com a serviço à qual a comissão se refere.
+valor: Valor da comissão paga ao barbeiro.
+data_pagamento: Data do pagamento da comissão.
+barbeiro: Relacionamento com o barbeiro que recebeu a comissão.
+
+adicionando as views, urls e templates nessarios
+
+Visões:
+
+lista_venda: Lista as vendas em aberto (a serem pagas).
+detalhe_venda: Mostra os detalhes de uma venda específica, incluindo o valor da comissão do barbeiro.
+criar_venda: Permite ao caixa criar uma nova venda, incluindo a seleção de produtos, aplicação de desconto e cálculo do valor total e da comissão do barbeiro.
+venda_marcar_pago: Processa o pagamento via Pix, atualiza o status da venda e registra o pagamento da comissão ao barbeiro.
+caixa: Tela para o caixa registrar o pagamento da venda, exibindo os detalhes da venda, as formas de pagamento e permitindo a seleção da forma de pagamento e o registro do pagamento.
+
+**Listar Comissões
+
+
+models de estoque:
+from django.db import models
+from django.template.defaultfilters import slugify
+
+class Categoria(models.Model):
+    titulo = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.titulo
+    
+class Produto(models.Model):
+    nome = models.CharField(max_length=40, unique=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    quantidade = models.FloatField()
+    preco_compra = models.FloatField()
+    preco_venda = models.FloatField()
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+
+    def __str__(self) -> str:
+        return self.nome
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nome)
+
+        return super().save(*args, **kwargs)
+
+    
+    def gerar_desconto(self, desconto):
+        return self.preco_venda - ((self.preco_venda * desconto) / 100)
+    
+    def lucro(self):
+        lucro = self.preco_venda - self.preço_compra
+        return (lucro * 100) / self.preço_compra
+    
+
+class Imagem(models.Model):
+    imagem = models.ImageField(upload_to='imagem_produto/')
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+
+Considerações Adicionais:
+
+Segurança: Implemente autenticação e autorização para garantir que apenas o caixa tenha acesso ao aplicativo de vendas.
+Gerenciamento de Estoque: Integre com o módulo de produtos para atualizar o estoque após cada venda.
+Relatórios: Crie relatórios de vendas por período, barbeiro, produto, etc.
+
+
+
+
+
+proximos passos e implementaçoes
+
+
+no nosso caixa faltou um opção muitissimo importante abrir e fechar caixa.
+horario de abertura e fechamento.
+de nosso sistema de permissão somente quem tem a tag
+class Users(AbstractUser):
+    choices_cargo = (
+        ('V', 'Vendedor'),
+        ('G', 'Gerente'),
+        ('C', 'Caixa'),
+        ('CL', 'Cliente'),
+        ('B', 'Barbeiro'))
+somente quem tem a tag "C" Caixa vai poder acessar a views do caixa 
+vamos implementar um cadastro de do usuario que vai ser contratado para exercer a função caixa
+relatorio diario onde podemos escolho qual relario imprimir:
+ relatorio de vendas total onde sera constado saldo bruto, 
+ ou relatorio somente de vendas de produto,
+  ou de  serviços realizado. ou relatorio da comição diaria do barbeiro.
+
+inclusao
+ vamos editar a tabela de serviço para na hora que castrarmos o serviço 
+ já ter a opção de colocar porcentagem do barbeiro naquele serviço.  
+ model de serviço
+ class Servico(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    foto = models.ImageField(upload_to='servicos_fotos/')
+    porcentagem_barbeiro = models.DecimalField(max_digits=10, decimal_places=2)

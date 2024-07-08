@@ -1,0 +1,12 @@
+<p>Venda {{ venda.id }}</p>
+<p>Cliente: {{ venda.agendamento.user.username }}</p>
+<p>Serviço: {{ venda.agendamento.servico }}</p>
+<p>Produtos:</p>
+<ul>
+    {% for item in venda.vendaproduto_set.all %}
+        <li>{{ item.produto.nome }} - Quantidade: {{ item.quantidade }}</li>
+    {% endfor %}
+</ul>
+<p>Desconto: {{ venda.desconto }}</p>
+<p>Valor Total: {{ venda.valor_total }}</p>
+<p>Status: {{ venda.status_pagamento }}</p>

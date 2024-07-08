@@ -1,0 +1,6 @@
+<p>Venda {{ venda.id }}</p>
+<p>Valor Total: {{ venda.valor_total }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmar Pagamento Pix</button>
+</form>

@@ -6,10 +6,12 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.contrib.auth import authenticate, login, get_user_model
-from.models import Barbeiro
+from .models import Barbeiro
 from django.utils.text import slugify
-
-# Create your views here.
+from django.db.models import Q, Sum
+from django.utils.timezone import now, timedelta
+from agendamentos.models import Agendamento
+from vendas.models import Venda
 
 def login(request):
     if request.method == 'GET':
@@ -29,8 +31,7 @@ def login(request):
         
         if not user:
             messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos. Tente novamente.')
-            return redirect(reverse('usuarios:login'))
-        
+            return redirect(reverse('usuarios:login'))        
         auth.login(request, user)
         return HttpResponse('Usuário logado com sucesso')
 
@@ -53,7 +54,6 @@ def cadastro(request):
         
         users = Users.objects.filter(username=username)
         
-
         if users.exists():
             messages.add_message(request, constants.ERROR, "Já existe um usúario com esse ursername")
             return redirect(reverse('cadastro'))
@@ -63,11 +63,9 @@ def cadastro(request):
             email=email,
             password=senha,
             
-        )
-        
+        )      
         return redirect(reverse('login'))
     
-
 def logout(request):
     request.session.flush()
     return redirect(reverse('usuarios:login'))
@@ -77,60 +75,10 @@ def barbeiros(request):
     return render(request, 'barbeiros.html', {'barbeiros': barbeiros})
 
 
-# def criar_barbeiro(request):
-#     if request.method == 'POST':
-#         # Capturando os dados do formulário POST
-#         nome = request.POST.get('nome')
-#         bio = request.POST.get('bio')
-#         especializacao = request.POST.get('especializacao')
-#         foto = request.FILES.get('foto')
-#         telefone = request.POST.get('telefone')
-#         endereco = request.POST.get('endereco')
-
-#         # Verifica se o campo nome está vazio
-#         if not nome:
-#             return render(request, 'criar_barbeiro.html', {'error_message': 'O campo Nome é obrigatório.'})
-
-#         # Gerando um nome de usuário único
-#         nome_slug = slugify(nome)
-#         username = f"barbeiro_{nome_slug}"
-
-#         # Verificando se o nome de usuário já existe
-#         if Users.objects.filter(username=username).exists():
-#             # Se o nome de usuário já existe, adiciona um número ao final do nome
-#             i = 1
-#             while Users.objects.filter(username=f"{username}{i}").exists():
-#                 i += 1
-#             username = f"{username}{i}"
-
-#         user = Users.objects.create_user(
-#             username=username,
-#             password='senha_default',  # Você precisa definir uma senha padrão
-#             cargo='B',  # Cargo de Barbeiro
-#             telefone=telefone,
-#             endereco=endereco,
-#         )
-
-#         # Cria o objeto Barbeiro apenas se o campo nome estiver preenchido
-#         barbeiro = Barbeiro.objects.create(
-#             user=user,
-#             nome=nome,
-#             bio=bio,
-#             especializacao=especializacao,
-#             foto=foto,
-#         )
-#         barbeiro.save()
-#         # Redirecionando após a criação
-#         return redirect(reverse('usuarios:barbeiros'))
-
-#     return render(request, 'criar_barbeiro.html')
-
-
 
 
 def criar_barbeiro(request):
     if request.method == 'POST':
-        # Capturando os dados do formulário POST
         nome = request.POST.get('nome')
         bio = request.POST.get('bio')
         especializacao = request.POST.get('especializacao')
@@ -139,15 +87,13 @@ def criar_barbeiro(request):
         endereco = request.POST.get('endereco')
         email = request.POST.get('email')  # Captura o campo 'email'
 
-        # Verifica se todos os campos estão preenchidos
+
         if not all([nome, bio, especializacao, foto, telefone, endereco, email]):
             return render(request, 'criar_barbeiro.html', {'error_message': 'Todos os campos são obrigatórios.'})
 
-        # Verifica se já existe um barbeiro com o mesmo nome
         if Barbeiro.objects.filter(nome=nome).exists():
             return render(request, 'criar_barbeiro.html', {'error_message': 'Já existe um barbeiro com esse nome.'})
 
-        # Gerando um nome de usuário único
         nome_slug = slugify(nome)
         i = 1
         username = f"barbeiro_{nome_slug}_{i}"
@@ -179,37 +125,117 @@ def criar_barbeiro(request):
         except Exception as e:
             return render(request, 'criar_barbeiro.html', {'error_message': f'Erro ao criar barbeiro: {e}'})
 
-        # Redirecionando após a criação
         return redirect(reverse('usuarios:barbeiros'))
 
     return render(request, 'criar_barbeiro.html')
 
-# import logging
+def dashboard_barbeiro(request, barbeiro_id):
+    """
+    Gera um dashboard com o desempenho de vendas e comissões do barbeiro especificado.
 
-# logger = logging.getLogger(__name__)
+    Args:
+        request: Objeto HttpRequest da requisição.
+        barbeiro_id: Chave primária do barbeiro a ser consultado.
 
-# def criar_barbeiro(request):
-#     #...
-#     try:
-#         user = Users.objects.create_user(
-#             #...
-#         )
-#         logger.info(f'Usuário criado com sucesso: {username}')
-#     except Exception as e:
-#         logger.error(f'Erro ao criar usuário: {e}')
-#         return render(request, 'criar_barbeiro.html', {'error_message': f'Erro ao criar usuário: {e}'})
+    Returns:
+        Dicionário com dados do dashboard.
+    """
 
-#     try:
-#         barbeiro = Barbeiro.objects.create(
-#             #...
-#         )
-#         barbeiro.save()
-#         logger.info(f'Barbeiro criado com sucesso: {nome}')
-#     except Exception as e:
-#         logger.error(f'Erro ao criar barbeiro: {e}')
-#         return render(request, 'criar_barbeiro.html', {'error_message': f'Erro ao criar barbeiro: {e}'})
+    barbeiro = Barbeiro.objects.get(id=barbeiro_id)
+    vendas = Venda.objects.filter(barbeiro=barbeiro)  # Obter vendas do barbeiro
 
-#     # Redirecionando após a criação
-#     logger.info(f'Redirecionando para {reverse("usuarios:barbeiros")}')
-#     return redirect(reverse('usuarios:barbeiros'))
+    # Obter parâmetros de filtro de período (da URL ou padrão)
+    periodo = request.GET.get('periodo') or 'diario'  # 'diario', 'quinzenal', 'mensal'
+    data_inicio = request.GET.get('data_inicio') or None  # Data de início (opcional)
+    data_fim = request.GET.get('data_fim') or None  # Data de fim (opcional)
 
+    # Filtrar vendas por período
+    vendas_filtradas = filtrar_vendas_por_periodo(vendas, periodo, data_inicio, data_fim)
+
+    # Calcular indicadores de desempenho
+    indicadores = calcular_indicadores_desempenho(vendas_filtradas)
+
+    # Contexto do dashboard
+    contexto = {
+        'barbeiro': barbeiro,
+        'periodo': periodo,
+        'data_inicio': data_inicio,
+        'data_fim': data_fim,
+        'indicadores': indicadores,
+    }
+
+    return contexto
+
+def filtrar_vendas_por_periodo(vendas, periodo, data_inicio, data_fim):
+    """
+    Aplica filtros de data nas vendas de acordo com o período selecionado.
+
+    Args:
+        vendas: QuerySet de objetos Venda.
+        periodo: String indicando o período ('diario', 'quinzenal', 'mensal').
+        data_inicio: Data de início do filtro (opcional).
+        data_fim: Data de fim do filtro (opcional).
+
+    Returns:
+        QuerySet de objetos Venda filtrados.
+    """
+    if periodo == 'diario':
+        if data_inicio:
+            vendas = vendas.filter(data_hora_venda__date=data_inicio)
+        elif data_fim:
+            vendas = vendas.filter(data_hora_venda__date__lte=data_fim)
+    elif periodo == 'quinzenal':
+        if data_inicio:
+            data_fim = data_inicio + timedelta(days=14)
+            vendas = vendas.filter(data_hora_venda__date__gte=data_inicio, data_hora_venda__date__lte=data_fim)
+        elif data_fim:
+            data_inicio = data_fim - timedelta(days=14)
+            vendas = vendas.filter(data_hora_venda__date__gte=data_inicio, data_hora_venda__date__lte=data_fim)
+    elif periodo == 'mensal':
+        if data_inicio:
+            data_fim = data_inicio + relativedelta.relativedelta(months=+1)
+            vendas = vendas.filter(data_hora_venda__date__gte=data_inicio, data_hora_venda__date__lte=data_fim)
+        elif data_fim:
+            data_inicio = data_fim + relativedelta.relativedelta(months=-1)
+            vendas = vendas.filter(data_hora_venda__date__gte=data_inicio, data_hora_venda__date__lte=data_fim)
+
+    return vendas
+
+def calcular_indicadores_desempenho(vendas_filtradas):
+    """
+    Calcula os indicadores de desempenho do barbeiro a partir das vendas filtradas.
+
+    Args:
+        vendas_filtradas: QuerySet de objetos Venda filtrados por período.
+
+    Returns:
+        Dicionário com indicadores de desempenho.
+    """
+
+    # Quantidade de vendas
+    quantidade_vendas = vendas_filtradas.count()
+    valor_total_vendas = vendas_filtradas.aggregate(Sum('valor_total'))['valor_total__sum'] or 0
+    valor_total_comissao = vendas_filtradas.aggregate(Sum('valor_comissao'))['valor_comissao__sum'] or 0
+    agendamentos_filtrados = Agendamento.objects.filter(
+        barbeiro=vendas_filtradas[0].barbeiro,  # Assumir que todas as vendas são do mesmo barbeiro
+        data_hora_agendamento__date__gte=vendas_filtradas[0].data_hora_venda__date,  # Data de início
+        data_hora_agendamento__date__lte=vendas_filtradas[0].data_hora_venda__date,  # Data de fim
+    )
+    
+    quantidade_agendamentos = agendamentos_filtrados.count()
+    # Ticket médio (valor total das vendas / quantidade de vendas)
+    ticket_medio = valor_total_vendas / (quantidade_vendas or 1)
+
+    # Taxa de conversão (quantidade de vendas / agendamentos)
+    taxa_conversao = (quantidade_vendas / quantidade_agendamentos) * 100  # Implementar lógica para calcular a taxa de conversão (necessário acesso aos agendamentos)
+
+    # Indicadores de desempenho
+    indicadores = {
+        'quantidade_vendas': quantidade_vendas,
+        'valor_total_vendas': valor_total_vendas,
+        'valor_total_comissao': valor_total_comissao,
+        'ticket_medio': ticket_medio,
+        'taxa_conversao': taxa_conversao,  # Implementar lógica para calcular
+    }
+
+    return indicadores

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center fonte-destaque1">Vendas em Aberto</h1>
+    <div class="list-group">
+        {% for venda in vendas %}
+            <div class="list-group-item cont-cadastro mb-3">
+                <p>Venda {{ venda.id }} - Total: {{ venda.valor_total }}</p>
+                <a class="btn btn-dark-color" href="{% url 'detalhes_venda' venda.pk %}">Detalhes</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

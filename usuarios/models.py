@@ -20,6 +20,7 @@ class Barbeiro(models.Model):
     especializacao = models.CharField(max_length=50, blank=True)
     foto = models.ImageField(upload_to='barbeiros', blank=True)
     nome = models.CharField(max_length=50)
+    saldo_comissao = models.FloatField(default=0)
 
     def __str__(self):
         return self.nome

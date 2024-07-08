@@ -1,0 +1,27 @@
+<form method="post">
+    {% csrf_token %}
+    <label for="agendamento">Agendamento:</label>
+    <select name="agendamento">
+        {% for agendamento in agendamentos %}
+            <option value="{{ agendamento.id }}">{{ agendamento }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="barbeiro">Barbeiro:</label>
+    <select name="barbeiro">
+        {% for barbeiro in barbeiros %}
+            <option value="{{ barbeiro.id }}">{{ barbeiro.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="produtos">Produtos:</label>
+    {% for produto in produtos %}
+        <input type="checkbox" name="produtos" value="{{ produto.id }}">{{ produto.nome }}
+        <input type="number" name="quantidade_{{ produto.id }}" min="1" placeholder="Quantidade">
+    {% endfor %}
+
+    <label for="desconto">Desconto:</label>
+    <input type="number" name="desconto" step="0.01" placeholder="Desconto">
+
+    <button type="submit">Criar Venda</button>
+</form>
