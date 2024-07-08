@@ -7,7 +7,7 @@
         {% for venda in vendas %}
             <div class="list-group-item cont-cadastro mb-3">
                 <p>Venda {{ venda.id }} - Total: {{ venda.valor_total }}</p>
-                <a class="btn btn-dark-color" href="{% url 'detalhes_venda' venda.pk %}">Detalhes</a>
+                <a class="btn btn-dark-color" href="{% url 'vendas:detalhes_venda' venda.pk %}">Detalhes</a>
             </div>
         {% endfor %}
     </div>

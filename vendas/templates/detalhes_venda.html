@@ -8,4 +8,4 @@
 </ul>
 <p>Valor Total: {{ venda.valor_total }}</p>
 <p>Status: {{ venda.status_pagamento }}</p>
-<a href="{% url 'aplicar_pagamento_pix' venda.pk %}">Aplicar Pagamento Pix</a>
+<a href="{% url 'vendas:aplicar_pagamento_pix' venda.pk %}">Aplicar Pagamento Pix</a>
