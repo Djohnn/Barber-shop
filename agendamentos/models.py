@@ -15,7 +15,7 @@ class Agendamento(models.Model):
     hora = models.TimeField()
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)  # Alterando para ForeignKey
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
-    agendamento_id = models.IntegerField()  # Armazenar o ID do agendamento relacionado
+    
     
     def __str__(self):
         return f"{self.cliente.username} - {self.servico.nome} - {self.data} {self.hora}"

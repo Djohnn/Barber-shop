@@ -34,7 +34,7 @@ class Venda(models.Model):
         return comissao_valor
 
 
-    # def calcular_valor_total(self):
+        # def calcular_valor_total(self):
     #     total = sum([vp.produto.preco_venda * vp.quantidade for vp in self.vendaproduto_set.all()])
     #     if self.desconto:
     #         total -= self.desconto

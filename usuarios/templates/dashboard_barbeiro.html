@@ -1,0 +1,50 @@
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Dashboard do Barbeiro - {{ barbeiro.nome }}</h1>
+
+    {% if mensagem %}
+        <div class="alert alert-warning text-center mt-4">
+            {{ mensagem }}
+        </div>
+    {% else %}
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Período: {{ periodo }}</h5>
+                        <p class="card-text">Data de Início: {{ data_inicio }}</p>
+                        <p class="card-text">Data de Fim: {{ data_fim }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de Vendas</h5>
+                        <p class="card-text">{{ indicadores.total_vendas }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de Serviços</h5>
+                        <p class="card-text">{{ indicadores.total_servicos }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Comissão Total</h5>
+                        <p class="card-text">{{ indicadores.comissao_total }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

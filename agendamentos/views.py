@@ -35,8 +35,10 @@ def criar_agendamento(request):
             data=data,
             hora=hora,
             servico=servico,
-            status='pendente'
+            status='Pendente'
         )
+        servico.status = 'agendado'
+        servico.save()
         return redirect('cliente:home')
 
     return render(request, 'criar_agendamento.html', {
@@ -56,6 +58,7 @@ def editar_agendamento(request, pk):
         hora = request.POST.get('hora')
         servico_id = request.POST.get('servico')
         barbeiro_id = request.POST.get('barbeiro')
+       
 
         servico = get_object_or_404(Servico, id=servico_id)
         barbeiro = get_object_or_404(Barbeiro, id=barbeiro_id)
@@ -64,6 +67,8 @@ def editar_agendamento(request, pk):
         agendamento.hora = hora
         agendamento.servico = servico
         agendamento.barbeiro = barbeiro
+        servico.status = 'agendado'
+        servico.save()
         agendamento.save()
 
         return redirect(reverse('agendamentos:listar_agendamentos'))
@@ -87,13 +92,14 @@ def escolher_servico(request):
     return render(request, 'escolher_servico.html', {'servicos': servicos})
 
 def agendar_servico(request):
-    servicos = Servico.objects.all()
-    barbeiros = Barbeiro.objects.all()
-    servico_id = request.GET.get('servico')
-    servico_selecionado = None
+    if request.metohd == 'GET':
+        servicos = Servico.objects.all()
+        barbeiros = Barbeiro.objects.all()
+        servico_id = request.GET.get('servico')
+        servico_selecionado = None
 
-    if servico_id:
-        servico_selecionado = get_object_or_404(Servico, id=servico_id)
+        if servico_id:
+            servico_selecionado = get_object_or_404(Servico, id=servico_id)
 
     if request.method == 'POST':
         data = request.POST.get('data')
@@ -107,8 +113,10 @@ def agendar_servico(request):
             data=data,
             hora=hora,
             servico=servico,
-            status='pendente'
+            status='Pendente'
         )
+        servico._status = 'agendado'
+        servico.save()
         messages.success(request, 'Agendamento criado com sucesso!')
         return redirect(reverse('listar_agendamentos'))
 
