@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Gerar Venda</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="forma_pagamento">Forma de Pagamento:</label>
+    <select name="forma_pagamento" id="forma_pagamento">
+        {% for forma in formas_pagamento %}
+        <option value="{{ forma }}">{{ forma }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Concluir Venda</button>
+</form>
+{% endblock %}

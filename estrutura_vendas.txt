@@ -200,3 +200,18 @@ inclusao
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     foto = models.ImageField(upload_to='servicos_fotos/')
     porcentagem_barbeiro = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+
+
+
+
+
+
+     {% for produto in produtos %}
+        <div class="form-group">
+            <label for="quantidade_{{ produto.id }}">Quantidade de {{ produto.nome }}</label>
+            <input type="number" id="quantidade_{{ produto.id }}" name="quantidade_{{ produto.id }}" class="form-control" value="{{ produto.quantidade }}">
+        </div>
+    {% endfor %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Agendamentos</h1>
+<ul>
+    {% for agendamento in agendamentos %}
+    <li>{{ agendamento.servico.nome }} - {{ agendamento.data }} - <a href="{% url 'vendas:adicionar_produto' agendamento.id %}">Adicionar Produtos</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

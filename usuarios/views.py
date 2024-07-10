@@ -48,17 +48,17 @@ def cadastro(request):
 
         if senha != confirmar_senha:
             messages.add_message(request, constants.ERROR, "As Duas senhas devem ser iguais")
-            return redirect(reverse('cadastro'))
+            return redirect(reverse('usuarios:cadastro'))
 
         if len(senha) < 3:
             messages.add_message(request, constants.ERROR, "A senha deve ter mais que 6 digitos")
-            return redirect(reverse('cadastro'))
+            return redirect(reverse('usuarios:cadastro'))
         
         users = Users.objects.filter(username=username)
         
         if users.exists():
             messages.add_message(request, constants.ERROR, "Já existe um usúario com esse ursername")
-            return redirect(reverse('cadastro'))
+            return redirect(reverse('usuarios:cadastro'))
         
         users = Users.objects.create_user(
             username=username,
@@ -66,7 +66,7 @@ def cadastro(request):
             password=senha,
             
         )      
-        return redirect(reverse('login'))
+        return redirect(reverse('usuarios:login'))
     
 def logout(request):
     request.session.flush()

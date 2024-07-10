@@ -11,8 +11,8 @@ class Produto(models.Model):
     nome = models.CharField(max_length=40, unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     quantidade = models.FloatField()
-    preco_compra = models.FloatField()
-    preco_venda = models.FloatField()
+    preco_compra = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    preco_venda = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     slug = models.SlugField(unique=True, blank=True, null=True)
 
 

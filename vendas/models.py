@@ -7,13 +7,13 @@ from decimal import Decimal
 class Venda(models.Model):
     agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
     produtos = models.ManyToManyField(Produto, through='VendaProduto')
-    desconto = models.FloatField(null=True, blank=True)
-    valor_total = models.FloatField()
+    desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     data_hora_venda = models.DateTimeField(auto_now_add=True)
     status_pagamento = models.CharField(max_length=20, choices=[('Em Aberto', 'Em Aberto'), ('Pago', 'Pago'), ('Cancelado', 'Cancelado')], default='Em Aberto')
     comprovante_pix = models.CharField(max_length=200, null=True, blank=True)
     barbeiro = models.ForeignKey(Barbeiro, on_delete=models.CASCADE)
-    valor_comissao = models.FloatField()
+    valor_comissao = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     chave_pix = models.CharField(max_length=100, blank=True, null=True)
     forma_pagamento = models.CharField(max_length=20, choices=[
         ('Dinheiro', 'Dinheiro'),
@@ -23,25 +23,18 @@ class Venda(models.Model):
     ])
     
     def calcular_valor_total(self):
-        print("Calculando valor total...")
-        total = Decimal('0.00')  # Inicializa o valor total como Decimal
+        total = Decimal('0.00')
         for vp in self.vendaproduto_set.all():
             produto_total = vp.produto.preco_venda * vp.quantidade
             total += produto_total
-            print(f"Adicionando produto: {vp.produto.nome}, Quantidade: {vp.quantidade}, Preço Unitário: {vp.produto.preco_venda}, Total do Produto: {produto_total}")
         
         if self.agendamento.servico:
-            total += self.agendamento.servico.preco  # Adiciona o valor do serviço ao valor total
-            print(f"Adicionando serviço: {self.agendamento.servico.nome}, Preço: {self.agendamento.servico.preco}")
+            total += self.agendamento.servico.preco
         
         if self.desconto:
-            print(f"Aplicando desconto: {self.desconto}")
             total -= self.desconto
         
-        print(f"Valor total calculado: {total}")
-        self.valor_total = total  # Atribui o valor total calculado
-        self.save()
-        print("Valor total salvo no banco de dados")
+        return total
     # def calcular_valor_total(self):
     #     total = sum([vp.produto.preco_venda * vp.quantidade for vp in self.vendaproduto_set.all()])
     #     if self.desconto:

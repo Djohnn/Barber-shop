@@ -50,7 +50,9 @@ def add_produto(request):
         preco_compra = request.POST.get('preco_compra')
         preco_venda = request.POST.get('preco_venda')
          
-
+        preco_compra = float(preco_compra)
+        preco_venda = float(preco_venda)
+        
         produto = Produto(nome=nome,
                           categoria_id=categoria,
                           quantidade=quantidade,
@@ -89,11 +91,11 @@ def produto(request, slug):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Produto atualizado com sucesso!')
-                return redirect('listar_produtos')  # Assumindo que existe uma view para listar produtos
+                return redirect(reverse('estoque:listar_produtos'))  # Assumindo que existe uma view para listar produtos
         elif "delete" in request.POST:
             produto.delete()
             messages.success(request, 'Produto excluído com sucesso!')
-            return redirect('listar_produtos')  # Assumindo que existe uma view para listar produtos
+            return redirect(reverse('estoque:listar_produtos'))  # Assumindo que existe uma view para listar produtos
     else:
         form = ProdutoForm(instance=produto)
     

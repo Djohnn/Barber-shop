@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Buscar Produtos</h1>
+<form method="get">
+    <input type="text" name="nome" placeholder="Nome do Produto">
+    <button type="submit">Buscar</button>
+</form>
+<ul>
+    {% for produto in produtos %}
+    <li>{{ produto.nome }} - {{ produto.preco_venda }} - <a href="{% url 'vendas:adicionar_produto' produto.id %}">Adicionar</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

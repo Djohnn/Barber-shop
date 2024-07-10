@@ -1,15 +1,214 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center">Criar Venda</h1>
+<html>
+<head>
+    <title>Criar Venda</title>
+</head>
+<body>
+    <h1>Criar Venda</h1>
+    
     <form method="post">
         {% csrf_token %}
+        <div>
+            <label>Selecione um Agendamento</label>
+            <select name="agendamento">
+                {% for agendamento in agendamentos %}
+                    <option value="{{ agendamento.id }}">{{ agendamento.servico.nome }} - {{ agendamento.data }} - {{ agendamento.cliente.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label>Adicione Produtos</label>
+            <select name="produto">
+                {% for produto in produtos %}
+                    <option value="{{ produto.id }}">{{ produto.nome }} - {{ produto.preco_venda }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantidade" value="1" min="1">
+            <button type="submit" name="add_produto">Adicionar Produto</button>
+        </div>
+    </form>
+
+    <h2>Produtos na Venda:</h2>
+    <ul>
+        {% if venda %}
+            <li>Serviço: {{ venda.agendamento.servico.nome }} - {{ venda.agendamento.servico.preco }}</li>
+            {% for venda_produto in venda_produtos %}
+                <li>Produto: {{ venda_produto.produto.nome }} - {{ venda_produto.produto.preco_venda }} - Quantidade: {{ venda_produto.quantidade }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Nenhum produto adicionado</li>
+        {% endif %}
+    </ul>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label>Forma de Pagamento</label>
+            <select name="forma_pagamento">
+                {% for forma in formas_pagamento %}
+                    <option value="{{ forma }}">{{ forma }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Concluir Venda</button>
+    </form>
+    
+    <h3>Valor Total: {{ venda.valor_total }}</h3>
+</body>
+</html>
+{% endblock  %}
+
+
+
+{% comment %} {% extends 'base.html' %}
+{% block content %}
+<h1>Criar Venda</h1>
+<form method="post">
+    {% csrf_token %}
+    
+    <h2>Selecione um Agendamento</h2>
+    <label for="agendamento">Agendamento:</label>
+    <select name="agendamento" id="agendamento" required>
+        {% for agendamento in agendamentos %}
+        <option value="{{ agendamento.id }}">{{ agendamento.servico.nome }} - {{ agendamento.data }} - {{ agendamento.cliente.username }}</option>
+        {% endfor %}
+    </select>
+    
+    <h2>Adicione Produtos</h2>
+    <label for="produto">Produto:</label>
+    <select name="produto" id="produto">
+        {% for produto in produtos %}
+        <option value="{{ produto.id }}">{{ produto.nome }} - {{ produto.preco_venda }}</option>
+        {% endfor %}
+    </select>
+    <label for="quantidade">Quantidade:</label>
+    <input type="number" name="quantidade" id="quantidade" value="1" min="1">
+    <button type="submit" name="action" value="add_produto">Adicionar Produto</button>
+    
+    <h2>Produtos na Venda</h2>
+    <ul>
+        {% for vp in venda.vendaproduto_set.all %}
+        <li>{{ vp.produto.nome }} - {{ vp.quantidade }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Valor Total: {{ venda.valor_total }}</h2>
+    
+    <h2>Forma de Pagamento</h2>
+    <label for="forma_pagamento">Forma de Pagamento:</label>
+    <select name="forma_pagamento" id="forma_pagamento" required>
+        {% for forma in formas_pagamento %}
+        <option value="{{ forma }}">{{ forma }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" name="action" value="concluir_venda">Concluir Venda</button>
+</form>
+{% endblock %}
+
+ {% endcomment %}
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+  <h1>Criar Venda</h1>
+  <form method="post">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>{{ form.agendamento.label }}:</td>
+        <td>{{ form.agendamento }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.barbeiro.label }}:</td>
+        <td>{{ form.barbeiro }}</td>
+      </tr>
+      <tr>
+        <div class="form-group">
+            <label for="produtos">Produtos</label>
+            <option value="">Selecione um produto</option>
+        
+            <select id="produtos" name="produtos[]" class="form-control" multiple>
+                {% for produto in produtos %}
+                    <option value="{{ produto.id }}">{{ produto.nome }} (R$ {{ produto.preco_venda }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% for produto in produtos %}
+            <div class="form-group">
+                <label for="quantidade">Quantidade de {{ produto.nome }}</label>
+                <input type="number" id="quantidade" name="quantidade" class="form-control" value="{{ produto.quantidade }}">
+            </div>
+        {% endfor %} 
+      </tr>
+      <tr>
+        <td>Produtos Selecionados:</td>
+        <td>
+          <ul id="produtos-selecionados">
+            <!-- lista de produtos selecionados será renderizada aqui -->
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>{{ form.desconto.label }}:</td>
+        <td>{{ form.desconto }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.forma_pagamento.label }}:</td>
+        <td>{{ form.forma_pagamento }}</td>
+      </tr>
+      <tr>
+        <td>Valor Total da Venda:</td>
+        <td id="valor-total-venda">R$ 0,00</td>
+      </tr>
+    </table>
+    <button type="submit">Criar Venda</button>
+  </form>
+
+  <script>
+    const produtosSelect = document.getElementById('produtos');
+    const produtosSelecionadosUl = document.getElementById('produtos-selecionados');
+
+    produtosSelect.addEventListener('change', (e) => {
+      const produtosSelecionados = Array.from(produtosSelect.selectedOptions).map((option) => {
+        const produtoId = option.value;
+        const produtoNome = option.text;
+        const quantidadeInput = document.createElement('input');
+        quantidadeInput.type = 'number';
+        quantidadeInput.min = 1;
+        quantidadeInput.value = 1;
+        quantidadeInput.name = `quantidade_${produtoId}`;
+
+        const li = document.createElement('li');
+        li.textContent = `${produtoNome} (Quantidade: ${quantidadeInput.value})`;
+        li.appendChild(quantidadeInput);
+
+        produtosSelecionadosUl.appendChild(li);
+      });
+    });
+  </script>
+{% endblock %} {% endcomment %}
+
+
+{% comment %} {% extends "base.html" %}
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Criar Venda</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
         <div class="form-group">
             <label for="agendamento">Agendamento</label>
             <select id="agendamento" name="agendamento" class="form-control">
                 {% for agendamento in agendamentos %}
-                    <option value="{{ agendamento.id }}">{{ agendamento }}</option>
+                    <option value="{{ agendamento.id }}">{{ agendamento.nome }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -20,25 +219,34 @@
                     <option value="{{ barbeiro.id }}">{{ barbeiro.nome }}</option>
                 {% endfor %}
             </select>
-        </div>
+        </div> 
+
+
+  
+
         <div class="form-group">
             <label for="produtos">Produtos</label>
-            <select id="produtos" name="produtos" class="form-control" multiple>
+            <option value="">Selecione um produto</option>
+        
+            <select id="produtos" name="produtos[]" class="form-control" multiple>
                 {% for produto in produtos %}
                     <option value="{{ produto.id }}">{{ produto.nome }} (R$ {{ produto.preco_venda }})</option>
                 {% endfor %}
             </select>
         </div>
+
         {% for produto in produtos %}
-        <div class="form-group">
-            <label for="quantidade_{{ produto.id }}">Quantidade de {{ produto.nome }}</label>
-            <input type="number" id="quantidade_{{ produto.id }}" name="quantidade_{{ produto.id }}" class="form-control" value="1">
-        </div>
-        {% endfor %}
-        <div class="form-group">
+            <div class="form-group">
+                <label for="quantidade">Quantidade de {{ produto.nome }}</label>
+                <input type="number" id="quantidade" name="quantidade" class="form-control" value="{{ produto.quantidade }}">
+            </div>
+        {% endfor %} 
+
+         <div class="form-group">
             <label for="desconto">Desconto</label>
-            <input type="text" id="desconto" name="desconto" class="form-control">
+            <input type="text" id="desconto" name="desconto" class="form-control" value="0.00">
         </div>
+
         <div class="form-group">
             <label for="forma_pagamento">Forma de Pagamento</label>
             <select id="forma_pagamento" name="forma_pagamento" class="form-control">
@@ -48,7 +256,9 @@
                 <option value="Pix">Pix</option>
             </select>
         </div>
+
         <button type="submit" class="btn btn-primary">Criar Venda</button>
     </form>
 </div>
-{% endblock %}
+
+{% endblock %}  {% endcomment %}
