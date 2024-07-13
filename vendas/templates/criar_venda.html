@@ -1,4 +1,157 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+
+ 
+
+
+  <h1>Criar Venda</h1>
+
+  {% if venda_criada %}
+    <div class="alert alert-success">
+      Venda criada com sucesso!
+    </div>
+  {% endif %}
+
+  {% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+
+  <form method="post" action="{% url 'vendas:criar_venda' %}">
+    {% csrf_token %}
+
+    <!-- Etapa 1: Selecionar Agendamento -->
+    <div>
+      <label>Selecione um Agendamento:</label>
+      <select name="agendamento">
+        <option value="">Selecione uma opção</option>
+        {% for agendamento in agendamentos %}
+          <option value="{{ agendamento.id }}" {% if venda and venda.agendamento.id == agendamento.id %} selected {% endif %}>{{ agendamento }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" name="selecionar_agendamento">Selecionar Agendamento</button>
+    </div>
+
+    <!-- Etapa 2: Adicionar Produtos (Aparece se houver um agendamento selecionado) -->
+    {% if venda %}
+      <div>
+        <input type="hidden" name="venda_id" value="{{ venda.id }}">
+        <label>Selecione um Produto:</label>
+        <select name="produto">
+          <option value="">Selecione uma opção</option>
+          {% for produto in produtos %}
+            <option value="{{ produto.id }}">{{ produto }}</option>
+          {% endfor %}
+        </select>
+        
+        <label>Quantidade:</label>
+        <input type="number" name="quantidade" value="1" min="1">
+
+        <button type="submit" name="adicionar_produto">Adicionar Produto</button>
+      </div>
+    {% endif %}
+
+    <!-- Exibir Serviço do Agendamento -->
+    {% if servico %}
+      <div>
+        <h2>Serviço:</h2>
+        <p>{{ servico.nome }} - {{ servico.preco }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Exibir Serviço do Agendamento -->
+    {% if venda and venda.agendamento.servico %}
+      <div>
+        <h2>Serviço:</h2>
+        <p>{{ venda.agendamento.servico.nome }} - R$ {{ venda.agendamento.servico.preco|floatformat:2 }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Etapa 3: Finalizar Venda -->
+    {% if venda_produtos %}
+    <h2>Venda:</h2>
+    <ul id="venda-produtos-list">
+      {% for venda_produto in venda_produtos %}
+        <li id="venda-produto-{{ venda_produto.id }}">
+          {{ venda_produto.produto.nome }}: {{ venda_produto.produto.preco_venda|floatformat:2 }} x {{ venda_produto.quantidade }} = {{ venda_produto.produto.preco_venda|multiply:venda_produto.quantidade|floatformat:2 }}
+          <button type="button" onclick="removerProduto({{ venda.id }}, {{ venda_produto.id }})">Remover</button>
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+   
+   
+    {% comment %} <div>
+      {% if venda_produtos %}
+        <h2>Produtos na Venda:</h2>
+        <ul>
+          {% for venda_produto in venda_produtos %}
+            <li>
+              {{ venda_produto.produto }}:  {{ venda_produto.preco_unitario }} x {{ venda_produto.quantidade }} = {{ venda_produto.preco_unitario|floatformat:2|multiply:venda_produto.quantidade }}
+              <a href="{% url 'vendas:remover_produto' venda.id venda_produto.id %}">Remover</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %} {% endcomment %}
+
+      <!-- Exibir Valor Total -->
+      <div>
+        <h2>Valor Total: {{ valor_total }}</h2>
+      </div>
+
+      <label>Forma de Pagamento:</label>
+      <select name="forma_pagamento">
+        {% for forma_pagamento in formas_pagamento %}
+          <option value="{{ forma_pagamento }}">{{ forma_pagamento }}</option>
+        {% endfor %}
+      </select>
+
+      <input type="hidden" name="venda_id" value="{{ venda.id }}">
+      <button type="submit" name="concluir_venda">Concluir Venda</button>
+    </div>
+  </form>
+
+  {% if mensagem %}
+    <div class="alert alert-info">
+      {{ mensagem }}
+    </div>
+  {% endif %}
+
+  <script>
+    function removerProduto(vendaId, vendaProdutoId) {
+        // Obtém o token CSRF
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/vendas/remover_produto/${vendaId}/${vendaProdutoId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove o item da lista de produtos
+            document.getElementById(`venda-produto-${vendaProdutoId}`).remove();
+            // Atualiza o valor total
+            document.getElementById('valor-total').textContent = data.valor_total.toFixed(2);
+            // Exibe a mensagem de sucesso
+            alert(data.message);
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+</script>
+{% endblock %}
+
+
+
+{% comment %} {% extends "base.html" %}
 
 {% block content %}
 <html>
@@ -62,203 +215,4 @@
 {% endblock  %}
 
 
-
-{% comment %} {% extends 'base.html' %}
-{% block content %}
-<h1>Criar Venda</h1>
-<form method="post">
-    {% csrf_token %}
-    
-    <h2>Selecione um Agendamento</h2>
-    <label for="agendamento">Agendamento:</label>
-    <select name="agendamento" id="agendamento" required>
-        {% for agendamento in agendamentos %}
-        <option value="{{ agendamento.id }}">{{ agendamento.servico.nome }} - {{ agendamento.data }} - {{ agendamento.cliente.username }}</option>
-        {% endfor %}
-    </select>
-    
-    <h2>Adicione Produtos</h2>
-    <label for="produto">Produto:</label>
-    <select name="produto" id="produto">
-        {% for produto in produtos %}
-        <option value="{{ produto.id }}">{{ produto.nome }} - {{ produto.preco_venda }}</option>
-        {% endfor %}
-    </select>
-    <label for="quantidade">Quantidade:</label>
-    <input type="number" name="quantidade" id="quantidade" value="1" min="1">
-    <button type="submit" name="action" value="add_produto">Adicionar Produto</button>
-    
-    <h2>Produtos na Venda</h2>
-    <ul>
-        {% for vp in venda.vendaproduto_set.all %}
-        <li>{{ vp.produto.nome }} - {{ vp.quantidade }}</li>
-        {% endfor %}
-    </ul>
-    
-    <h2>Valor Total: {{ venda.valor_total }}</h2>
-    
-    <h2>Forma de Pagamento</h2>
-    <label for="forma_pagamento">Forma de Pagamento:</label>
-    <select name="forma_pagamento" id="forma_pagamento" required>
-        {% for forma in formas_pagamento %}
-        <option value="{{ forma }}">{{ forma }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" name="action" value="concluir_venda">Concluir Venda</button>
-</form>
-{% endblock %}
-
  {% endcomment %}
-
-{% comment %} {% extends 'base.html' %}
-
-{% block content %}
-  <h1>Criar Venda</h1>
-  <form method="post">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.agendamento.label }}:</td>
-        <td>{{ form.agendamento }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.barbeiro.label }}:</td>
-        <td>{{ form.barbeiro }}</td>
-      </tr>
-      <tr>
-        <div class="form-group">
-            <label for="produtos">Produtos</label>
-            <option value="">Selecione um produto</option>
-        
-            <select id="produtos" name="produtos[]" class="form-control" multiple>
-                {% for produto in produtos %}
-                    <option value="{{ produto.id }}">{{ produto.nome }} (R$ {{ produto.preco_venda }})</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        {% for produto in produtos %}
-            <div class="form-group">
-                <label for="quantidade">Quantidade de {{ produto.nome }}</label>
-                <input type="number" id="quantidade" name="quantidade" class="form-control" value="{{ produto.quantidade }}">
-            </div>
-        {% endfor %} 
-      </tr>
-      <tr>
-        <td>Produtos Selecionados:</td>
-        <td>
-          <ul id="produtos-selecionados">
-            <!-- lista de produtos selecionados será renderizada aqui -->
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td>{{ form.desconto.label }}:</td>
-        <td>{{ form.desconto }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.forma_pagamento.label }}:</td>
-        <td>{{ form.forma_pagamento }}</td>
-      </tr>
-      <tr>
-        <td>Valor Total da Venda:</td>
-        <td id="valor-total-venda">R$ 0,00</td>
-      </tr>
-    </table>
-    <button type="submit">Criar Venda</button>
-  </form>
-
-  <script>
-    const produtosSelect = document.getElementById('produtos');
-    const produtosSelecionadosUl = document.getElementById('produtos-selecionados');
-
-    produtosSelect.addEventListener('change', (e) => {
-      const produtosSelecionados = Array.from(produtosSelect.selectedOptions).map((option) => {
-        const produtoId = option.value;
-        const produtoNome = option.text;
-        const quantidadeInput = document.createElement('input');
-        quantidadeInput.type = 'number';
-        quantidadeInput.min = 1;
-        quantidadeInput.value = 1;
-        quantidadeInput.name = `quantidade_${produtoId}`;
-
-        const li = document.createElement('li');
-        li.textContent = `${produtoNome} (Quantidade: ${quantidadeInput.value})`;
-        li.appendChild(quantidadeInput);
-
-        produtosSelecionadosUl.appendChild(li);
-      });
-    });
-  </script>
-{% endblock %} {% endcomment %}
-
-
-{% comment %} {% extends "base.html" %}
-
-
-
-{% block content %}
-<div class="container mt-5">
-    <h1>Criar Venda</h1>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="agendamento">Agendamento</label>
-            <select id="agendamento" name="agendamento" class="form-control">
-                {% for agendamento in agendamentos %}
-                    <option value="{{ agendamento.id }}">{{ agendamento.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="barbeiro">Barbeiro</label>
-            <select id="barbeiro" name="barbeiro" class="form-control">
-                {% for barbeiro in barbeiros %}
-                    <option value="{{ barbeiro.id }}">{{ barbeiro.nome }}</option>
-                {% endfor %}
-            </select>
-        </div> 
-
-
-  
-
-        <div class="form-group">
-            <label for="produtos">Produtos</label>
-            <option value="">Selecione um produto</option>
-        
-            <select id="produtos" name="produtos[]" class="form-control" multiple>
-                {% for produto in produtos %}
-                    <option value="{{ produto.id }}">{{ produto.nome }} (R$ {{ produto.preco_venda }})</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        {% for produto in produtos %}
-            <div class="form-group">
-                <label for="quantidade">Quantidade de {{ produto.nome }}</label>
-                <input type="number" id="quantidade" name="quantidade" class="form-control" value="{{ produto.quantidade }}">
-            </div>
-        {% endfor %} 
-
-         <div class="form-group">
-            <label for="desconto">Desconto</label>
-            <input type="text" id="desconto" name="desconto" class="form-control" value="0.00">
-        </div>
-
-        <div class="form-group">
-            <label for="forma_pagamento">Forma de Pagamento</label>
-            <select id="forma_pagamento" name="forma_pagamento" class="form-control">
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Cartão Débito">Cartão Débito</option>
-                <option value="Cartão Crédito">Cartão Crédito</option>
-                <option value="Pix">Pix</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Criar Venda</button>
-    </form>
-</div>
-
-{% endblock %}  {% endcomment %}

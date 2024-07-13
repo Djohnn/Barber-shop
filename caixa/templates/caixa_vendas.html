@@ -8,8 +8,8 @@
     <div class="list-group">
         {% for venda in vendas %}
             <p>Venda {{ venda.id }} - Total: {{ venda.valor_total }}</p>
-            <a href="{% url 'detalhe_venda' venda.pk %}">Detalhes</a>
-            <a href="{% url 'caixa' venda.pk %}">Registrar Pagamento</a>
+            <a href="{% url 'caixa:detalhe_venda' venda.pk %}">Detalhes</a>
+            <a href="{% url 'caixa:caixa' venda.pk %}">Registrar Pagamento</a>
         {% endfor %}
     </div>
     </div>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Vendas Abertas</h1>
+  <ul>
+    {% for venda in vendas_abertas %}
+    <p>Venda {{ venda.id }}</p>
+    <p>Agendamento: {{ venda.agendamento }}</p>
+    <p>Produtos:</p>
+    <ul>
+        {% for item in venda.vendaproduto_set.all %}
+            <li>{{ item.produto.nome }} - Quantidade: {{ item.quantidade }}</li>
+        {% endfor %}
+    </ul>
+    <p>Valor Total: {{ venda.valor_total }}</p>
+    <p>Status: {{ venda.status_pagamento }}</p>
+    {% empty %}
+      <li>Nenhuma venda aberta.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

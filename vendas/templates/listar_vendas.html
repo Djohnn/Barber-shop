@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% comment %} {% block content %}
+  <h1>Listagem de Vendas</h1>
+
+  
+    {% for venda in vendas %}
+      <li>{{ venda.cliente.username }} - Total: {{ venda.valor_total }}</li>
+      <!-- Ajuste conforme a estrutura do seu modelo de cliente -->
+    {% endfor %}
+  
+{% endblock %} {% endcomment %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+  
+<div class="container">
+    <h1 class="text-center fonte-destaque1">Vendas em Aberto</h1>
+    <div class="list-group">
+        {% for venda in vendas %}
+            <div class="list-group-item cont-cadastro mb-3">
+                <p>Venda {{ venda.barbeiro}} - {{venda.agendamento.servico.nome}} - Nº_venda-{{ venda.id }} - Total: {{ venda.valor_total }}</p>
+                <a class="btn btn-dark-color" href="{% url 'vendas:detalhes_venda' venda.pk %}">Detalhes</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

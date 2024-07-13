@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
 <h1>Buscar Produtos</h1>
+
+{% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+
 <form method="get">
     <input type="text" name="nome" placeholder="Nome do Produto">
     <button type="submit">Buscar</button>

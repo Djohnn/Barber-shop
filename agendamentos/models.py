@@ -6,6 +6,7 @@ STATUS_CHOICES = (
     ('pendente', 'Pendente'),
     ('agendado', 'Agendado'),
     ('finalizado', 'Finalizado'),
+    ('cancelado', 'Cancelado'),
 )
 
 class Agendamento(models.Model):
@@ -15,6 +16,10 @@ class Agendamento(models.Model):
     hora = models.TimeField()
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)  # Alterando para ForeignKey
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+
+    def cancelar(self):
+        self.status = 'Cancelado'
+        self.save()
     
     
     def __str__(self):

@@ -215,3 +215,20 @@ inclusao
             <input type="number" id="quantidade_{{ produto.id }}" name="quantidade_{{ produto.id }}" class="form-control" value="{{ produto.quantidade }}">
         </div>
     {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+    reabrir venda:
+     buscar vendas canceladas:
+     
+     abrir aquela venda
+     reabrir venda

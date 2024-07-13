@@ -17,7 +17,7 @@
     document.getElementById('forma_pagamento').addEventListener('change', function() {
         if (this.value === 'Pix') {
             // Mostra o QR Code Pix
-            fetch("{% url 'gerar_qr_code_pix' venda.pk %}")
+            fetch("{% url 'caixa:gerar_qr_code_pix' venda.pk %}")
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('qr_code_pix').src = 'data:image/png;base64,' + data.qr_code_pix;

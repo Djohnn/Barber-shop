@@ -10,7 +10,12 @@ class Venda(models.Model):
     desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     valor_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     data_hora_venda = models.DateTimeField(auto_now_add=True)
-    status_pagamento = models.CharField(max_length=20, choices=[('Em Aberto', 'Em Aberto'), ('Pago', 'Pago'), ('Cancelado', 'Cancelado')], default='Em Aberto')
+    status_pagamento = models.CharField(max_length=20, choices=[
+        ('Em Aberto', 'Em Aberto'),
+        ('Fechada', 'Fechada'),
+        ('Reaberta', 'Reaberta'),
+        ('Pago', 'Pago'),
+        ('Cancelado', 'Cancelado')], default='Em Aberto')
     comprovante_pix = models.CharField(max_length=200, null=True, blank=True)
     barbeiro = models.ForeignKey(Barbeiro, on_delete=models.CASCADE)
     valor_comissao = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -59,3 +64,4 @@ class VendaProduto(models.Model):
     venda = models.ForeignKey(Venda, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

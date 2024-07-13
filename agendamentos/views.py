@@ -115,9 +115,10 @@ def agendar_servico(request):
             servico=servico,
             status='Pendente'
         )
-        servico._status = 'agendado'
+        servico._status = 'Agendado'
         servico.save()
         messages.success(request, 'Agendamento criado com sucesso!')
+        servico._status = 'Agendado'
         return redirect(reverse('listar_agendamentos'))
 
     return render(request, 'criar_agendamento.html', {

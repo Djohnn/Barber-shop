@@ -4,8 +4,8 @@ from vendas.models import Venda  # Importe o modelo Venda
 
 class Caixa(models.Model):
     # ...
-    valor_abertura = models.FloatField(default=0)  # Valor inicial do caixa
-    valor_fechamento = models.FloatField(null=True, blank=True)  # Valor final do caixa
+    valor_abertura = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Valor inicial do caixa
+    valor_fechamento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Valor final do caixa
 
     def fechar_caixa(self, valor_fechamento_usuario):
         if self.status:  # Verifica se o caixa está aberto

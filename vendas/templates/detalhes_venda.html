@@ -1,3 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+
+<p>Venda {{ venda.id }}</p>
+<p>Agendamento: {{ venda.agendamento }}</p>
+<p>Produtos:</p>
+<ul>
+    {% for item in venda.vendaproduto_set.all %}
+    <li>
+        {{ item.produto.nome }} - 
+        Quantidade: {{ item.quantidade }} - 
+        Valor Unitário: {{ item.valor_unitario }} - 
+        Subtotal: {{ item.subtotal }}
+    </li>
+    {% endfor %}
+</ul>
+<p>Valor Total: {{ venda.valor_total }}</p>
+<p>Status: {{ venda.status_pagamento }}</p>
+<a href="{% url 'vendas:fechar_venda' venda.pk %}">Fechar venda</a><br>
+<a href="{% url 'vendas:cancelar_venda' venda.pk %}">Cancelar Venda</a><br>
+
+{% if venda.status_pagamento == 'Cancelado' %}
+  <a href="{% url 'vendas:reabrir_venda' venda.pk %}">Reabrir Venda</a>
+{% endif %}
+
+{% endblock %}
+
+
+
+{% comment %} {% extends "base.html" %}
+
+
+{% block content %}
 <p>Venda {{ venda.id }}</p>
 <p>Agendamento: {{ venda.agendamento }}</p>
 <p>Produtos:</p>
@@ -9,3 +51,4 @@
 <p>Valor Total: {{ venda.valor_total }}</p>
 <p>Status: {{ venda.status_pagamento }}</p>
 <a href="{% url 'vendas:aplicar_pagamento_pix' venda.pk %}">Aplicar Pagamento Pix</a>
+{% endblock  %} {% endcomment %}

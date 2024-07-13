@@ -6,10 +6,11 @@ from qrcode import QRCode, constants
 from io import BytesIO
 import base64
 from .models import Caixa
-
+from vendas.models import Venda
+from django.urls import reverse_lazy, reverse
 
 def caixa_vendas(request):
-    vendas = Venda.objects.filter(status_pagamento='Em Aberto')
+    vendas = Venda.objects.filter(status_pagamento='Fechado')
     return render(request, 'caixa_vendas.html', {'vendas': vendas})
 
 def detalhe_venda(request, pk):
@@ -45,7 +46,7 @@ def caixa(request, pk):
         venda.save()
         venda.barbeiro.saldo_comissao += venda.valor_comissao
         venda.barbeiro.save()
-        return redirect('lista_vendas')
+        return redirect(reverse('caixa:caixa', args=[pk]))
 
     return render(request, 'caixa.html', {'venda': venda, 'qr_code_pix_base64': qr_code_pix_base64})
 
@@ -81,3 +82,15 @@ def abrir_caixa(request):
         else:
             return render(request, 'abrir_caixa.html', {'erro': 'Senha inválida'})
     return render(request, 'abrir_caixa.html')
+
+
+
+def fechar_vendas(request, pk):
+    venda = get_object_or_404(Venda, pk=pk)
+    venda.status_pagamento = 'Fechado'
+    venda.save()
+    return redirect(reverse_lazy('caixa:vendas_aberta_caixa'))
+
+def vendas_aberta_caixa(request):
+    vendas_abertas = Venda.objects.filter()
+    return render(request, 'vendas_aberta_caixa.html', {'vendas_abertas': vendas_abertas})
