@@ -1,0 +1,20 @@
+{% extends 'caixa_base.html' %}
+
+{% block content %}
+
+  {% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+    <h1>Vendas Finalizadas</h1>
+    <ul class="list-group">
+        {% for venda in vendas %}
+            <li class="list-group-item">
+                {{ venda.agendamento.cliente.first_name }} {{ venda.agendamento.cliente.last_name }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -7,7 +7,6 @@ from decimal import Decimal
 class Venda(models.Model):
     agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
     produtos = models.ManyToManyField(Produto, through='VendaProduto')
-    desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     valor_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     data_hora_venda = models.DateTimeField(auto_now_add=True)
     status_pagamento = models.CharField(max_length=20, choices=[
@@ -36,10 +35,11 @@ class Venda(models.Model):
         if self.agendamento.servico:
             total += self.agendamento.servico.preco
         
-        if self.desconto:
-            total -= self.desconto
-        
         return total
+    
+    def __str__(self):
+        return f"{self.agendamento.cliente.first_name} {self.agendamento.cliente.last_name}"
+
     # def calcular_valor_total(self):
     #     total = sum([vp.produto.preco_venda * vp.quantidade for vp in self.vendaproduto_set.all()])
     #     if self.desconto:
@@ -65,3 +65,9 @@ class VendaProduto(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+
+
+    def __str__(self):
+        return f"{self.produto.nome} - R$ {self.preco_unitario}"
+    

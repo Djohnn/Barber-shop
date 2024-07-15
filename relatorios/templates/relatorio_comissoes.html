@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Comissões</title>
+</head>
+<body>
+    <h1>Relatório de Comissões</h1>
+    <ul>
+        {% for comissao in comissoes %}
+            <li>Barbeiro: {{ comissao.barbeiro__nome }} - Total Comissão: {{ comissao.total_comissao }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

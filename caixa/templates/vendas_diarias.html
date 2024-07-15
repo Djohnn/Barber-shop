@@ -1,0 +1,35 @@
+{% extends "caixa_base.html" %}
+
+{% block content %}
+
+<h1>Vendas Diárias</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Serviço</th>
+            <th>Barbeiro</th>
+            <th>Valor Total</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for venda in vendas %}
+        <tr>
+            <td>{{ venda.data_venda }}</td>
+            <td>{{ venda.agendamento.cliente.first_name }} {{ venda.agendamento.cliente.last_name }}</td>
+            <td>{{ venda.agendamento.servico.nome }}</td>
+            <td>{{ venda.barbeiro.user.first_name }} {{ venda.barbeiro.user.last_name }}</td>
+            <td>R$ {{ venda.valor_total }}</td>
+            <td>
+                <a href="{% url 'caixa:detalhes_venda_caixa' venda.id %}">Ver Detalhes</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock  %}

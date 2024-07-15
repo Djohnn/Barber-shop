@@ -9,11 +9,141 @@
 
   <h1>Criar Venda</h1>
 
-  {% if venda_criada %}
-    <div class="alert alert-success">
-      Venda criada com sucesso!
+
+  {% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+
+  <form method="post" action="{% url 'vendas:criar_venda' %}">
+    {% csrf_token %}
+
+    <!-- Etapa 1: Selecionar Agendamento -->
+    <div>
+      <label>Selecione um Agendamento:</label>
+      <select name="agendamento">
+        <option value="">Selecione uma opção</option>
+        {% for agendamento in agendamentos %}
+          <option value="{{ agendamento.id }}" {% if venda and venda.agendamento.id == agendamento.id %} selected {% endif %}>{{ agendamento }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" name="selecionar_agendamento">Selecionar Agendamento</button>
+    </div>
+
+    <!-- Etapa 2: Adicionar Produtos (Aparece se houver um agendamento selecionado) -->
+    {% if venda %}
+      <div>
+        <input type="hidden" name="venda_id" value="{{ venda.id }}">
+        <label>Selecione um Produto:</label>
+        <select name="produto">
+          <option value="">Selecione uma opção</option>
+          {% for produto in produtos %}
+            <option value="{{ produto.id }}">{{ produto }}</option>
+          {% endfor %}
+        </select>
+        
+        <label>Quantidade:</label>
+        <input type="number" name="quantidade" value="1" min="1">
+
+        <button type="submit" name="adicionar_produto">Adicionar Produto</button>
+      </div>
+    {% endif %}
+
+    <!-- Exibir Serviço do Agendamento -->
+    {% if servico %}
+      <div>
+        <h2>Serviço:</h2>
+        <p>{{ servico.nome }} - {{ servico.preco }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Exibir Serviço do Agendamento -->
+    {% if venda and venda.agendamento.servico %}
+      <div>
+        <h2>Serviço:</h2>
+        <p>{{ venda.agendamento.servico.nome }} - R$ {{ venda.agendamento.servico.preco|floatformat:2 }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Etapa 3: Finalizar Venda -->
+    {% if venda_produtos %}
+    <h2>Venda:</h2>
+    <ul id="venda-produtos-list">
+      {% for venda_produto in venda_produtos %}
+        <li id="venda-produto-{{ venda_produto.id }}">
+          {{ venda_produto.produto.nome }}: {{ venda_produto.produto.preco_venda|floatformat:2 }} x {{ venda_produto.quantidade }} = {{ venda_produto.produto.preco_venda|multiply:venda_produto.quantidade|floatformat:2 }}
+          <button type="button" onclick="removerProduto({{ venda.id }}, {{ venda_produto.id }})">Remover</button>
+        </li>
+      {% empty %}  <!-- Adicionado essa linha para exibir uma mensagem quando não houver produtos -->
+        <li>Nenhum produto adicionado.</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+      <!-- Exibir Valor Total -->
+      <div id="valor-total">  <!-- Adicionado um ID para o elemento -->
+        <h2>Valor Total: {{ valor_total }}</h2>
+      </div>
+
+      <label>Forma de Pagamento:</label>
+      <select name="forma_pagamento">
+        {% for forma_pagamento in formas_pagamento %}
+          <option value="{{ forma_pagamento }}">{{ forma_pagamento }}</option>
+        {% endfor %}
+      </select>
+
+      <input type="hidden" name="venda_id" value="{{ venda.id }}">
+      <button type="submit" name="concluir_venda">Concluir Venda</button>
+    </div>
+  </form>
+
+  {% if mensagem %}
+    <div class="alert alert-info">
+      {{ mensagem }}
     </div>
   {% endif %}
+
+  <script>
+    function removerProduto(vendaId, vendaProdutoId) {
+        // Obtém o token CSRF
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/vendas/remover_produto/${vendaId}/${vendaProdutoId}/`, {
+            method: 'POST',
+            headers:{
+                'X-CSRFToken': csrftoken
+            }
+        })
+       .then(response => response.json())
+       .then(data => {
+            // Remove o item da lista de produtos
+            document.getElementById(`venda-produto-${vendaProdutoId}`).remove();
+            // Atualiza o valor total
+            document.getElementById('valor-total').textContent = data.valor_total.toFixed(2);
+            // Exibe a mensagem de sucesso
+            alert(data.message);
+        })
+       .catch(error => console.error('Erro:', error));
+    }
+</script>
+{% endblock %}
+
+
+
+{% comment %} {% extends 'base.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+
+ 
+
+
+  <h1>Criar Venda</h1>
+
 
   {% if messages %}
   {% for message in messages %}
@@ -86,21 +216,6 @@
     </ul>
     {% endif %}
 
-   
-   
-    {% comment %} <div>
-      {% if venda_produtos %}
-        <h2>Produtos na Venda:</h2>
-        <ul>
-          {% for venda_produto in venda_produtos %}
-            <li>
-              {{ venda_produto.produto }}:  {{ venda_produto.preco_unitario }} x {{ venda_produto.quantidade }} = {{ venda_produto.preco_unitario|floatformat:2|multiply:venda_produto.quantidade }}
-              <a href="{% url 'vendas:remover_produto' venda.id venda_produto.id %}">Remover</a>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %} {% endcomment %}
-
       <!-- Exibir Valor Total -->
       <div>
         <h2>Valor Total: {{ valor_total }}</h2>
@@ -148,71 +263,6 @@
     }
 </script>
 {% endblock %}
-
-
-
-{% comment %} {% extends "base.html" %}
-
-{% block content %}
-<html>
-<head>
-    <title>Criar Venda</title>
-</head>
-<body>
-    <h1>Criar Venda</h1>
-    
-    <form method="post">
-        {% csrf_token %}
-        <div>
-            <label>Selecione um Agendamento</label>
-            <select name="agendamento">
-                {% for agendamento in agendamentos %}
-                    <option value="{{ agendamento.id }}">{{ agendamento.servico.nome }} - {{ agendamento.data }} - {{ agendamento.cliente.username }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div>
-            <label>Adicione Produtos</label>
-            <select name="produto">
-                {% for produto in produtos %}
-                    <option value="{{ produto.id }}">{{ produto.nome }} - {{ produto.preco_venda }}</option>
-                {% endfor %}
-            </select>
-            <input type="number" name="quantidade" value="1" min="1">
-            <button type="submit" name="add_produto">Adicionar Produto</button>
-        </div>
-    </form>
-
-    <h2>Produtos na Venda:</h2>
-    <ul>
-        {% if venda %}
-            <li>Serviço: {{ venda.agendamento.servico.nome }} - {{ venda.agendamento.servico.preco }}</li>
-            {% for venda_produto in venda_produtos %}
-                <li>Produto: {{ venda_produto.produto.nome }} - {{ venda_produto.produto.preco_venda }} - Quantidade: {{ venda_produto.quantidade }}</li>
-            {% endfor %}
-        {% else %}
-            <li>Nenhum produto adicionado</li>
-        {% endif %}
-    </ul>
-    
-    <form method="post">
-        {% csrf_token %}
-        <div>
-            <label>Forma de Pagamento</label>
-            <select name="forma_pagamento">
-                {% for forma in formas_pagamento %}
-                    <option value="{{ forma }}">{{ forma }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit">Concluir Venda</button>
-    </form>
-    
-    <h3>Valor Total: {{ venda.valor_total }}</h3>
-</body>
-</html>
-{% endblock  %}
 
 
  {% endcomment %}

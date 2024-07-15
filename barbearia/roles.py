@@ -24,9 +24,3 @@ class Caixa(AbstractUserRole):
         'add_produto_agendamento': True,
     }
 
-class Caixa(AbstractUserRole):
-    available_permissions = {
-        'dashbord': True,
-        'comissão': True,
-        'servico_realizado': True,
-    }

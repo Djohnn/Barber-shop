@@ -7,6 +7,7 @@ from django.contrib.messages import constants
 from django.urls import reverse, reverse_lazy
 from decimal import Decimal
 from django.http import JsonResponse
+from caixa.models import Caixa
 
 def listar_vendas(request):
     vendas = Venda.objects.filter(status_pagamento='Em Aberto').select_related('barbeiro', 'agendamento')
@@ -37,9 +38,15 @@ def reabrir_venda(request, pk):
 
 def fechar_vendas(request, pk):
     venda = get_object_or_404(Venda, pk=pk)
-    venda.status_pagamento = 'Fechado'
+    venda.status_pagamento = 'Fechada'
     venda.save()
-    return redirect(reverse_lazy('caixa:vendas_aberta_caixa'))
+
+    caixa = Caixa.objects.filter(funcionario=request.user, aberto=True).last()
+    if caixa:
+        return redirect(reverse_lazy('caixa:listar_vendas_fechadas'))
+    else:
+        # Redireciona para abrir um novo caixa
+        return redirect('caixa:abrir_caixa')
 
 def cancelar_venda(request, pk):
     venda = get_object_or_404(Venda, pk=pk)
@@ -95,6 +102,7 @@ def detalhes_venda(request, pk):
 def remover_produto(request, venda_id, venda_produto_id):
     venda = get_object_or_404(Venda, id=venda_id)
     venda_produto = get_object_or_404(VendaProduto, id=venda_produto_id)
+    produto_nome = venda_produto.produto.nome
     venda_produto.delete()
     venda.valor_total = venda.calcular_valor_total()
     venda.save()
@@ -105,15 +113,7 @@ def remover_produto(request, venda_id, venda_produto_id):
     }
     return JsonResponse(response_data)
 
-def aplicar_pagamento_pix(request, pk):
-    venda = get_object_or_404(Venda, pk=pk)
-    if request.method == 'POST':
-        venda.status_pagamento = 'Pago'
-        venda.save()
-        venda.barbeiro.saldo_comissao += venda.valor_comissao  # Atualiza saldo da comissão do barbeiro
-        venda.barbeiro.save()
-        return redirect('detalhes_venda', pk=pk)
-    return render(request, 'aplicar_pagamento_pix.html', {'venda': venda})
+
 
 def criar_ou_obter_venda(agendamento):
     venda, created = Venda.objects.get_or_create(
@@ -130,7 +130,8 @@ def criar_ou_obter_venda(agendamento):
     return venda, created
 
 def criar_venda(request):
-    agendamentos = Agendamento.objects.select_related('servico').all()
+    
+    agendamentos = Agendamento.objects.select_related('servico').filter(status='agendado')
     produtos = Produto.objects.all()
     formas_pagamento = ['Dinheiro', 'Cartão Débito', 'Cartão Crédito', 'Pix']
     venda = None

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'vendas',
     'servicos',
     'caixa',
+    'relatorios',
     
 ]
 
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'caixa.context_processors.caixa_aberto',
             ],
         },
     },
@@ -116,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-BR'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 

@@ -113,9 +113,9 @@ def agendar_servico(request):
             data=data,
             hora=hora,
             servico=servico,
-            status='Pendente'
+            status='pendente'
         )
-        servico._status = 'Agendado'
+        servico._status = 'agendado'
         servico.save()
         messages.success(request, 'Agendamento criado com sucesso!')
         servico._status = 'Agendado'

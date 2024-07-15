@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Vendas</title>
+</head>
+<body>
+    <h1>Relatório de Vendas</h1>
+    <ul>
+        {% for venda in vendas %}
+            <li>Venda {{ venda.id }} - Cliente: {{ venda.agendamento.cliente }} - Total: {{ venda.valor_total }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,35 @@
+Aqui está um exemplo de como podemos refatorar essas views para reduzir a repetição:
+
+Criar Funções Utilitárias
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.contrib.messages import constants
+
+def get_and_render(request, template, context):
+    return render(request, template, context)
+
+def add_success_message(request, message):
+    messages.add_message(request, constants.SUCCESS, message)
+
+def add_error_message(request, message):
+    messages.add_message(request, constants.ERROR, message)
+
+def get_venda_or_404(venda_id):
+    return get_object_or_404(Venda, id=venda_id)
+
+
+
+Uso de Mixins (se necessário)
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
+class LoginRequiredMixin:
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+class CaixaAbertoRequiredMixin:
+    @method_decorator(caixa_aberto_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

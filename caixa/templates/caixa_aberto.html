@@ -1,0 +1,19 @@
+
+{% extends "caixa_base.html" %}
+
+
+{%block content%}
+
+    <h1>Caixa Aberto</h1>
+    <p>Funcionário: {{ caixa.funcionario.username }}</p>
+    <p>Data de Abertura: {{ caixa.data_abertura }}</p>
+    <p>Valor Inicial: {{ caixa.valor_inicial }}</p>
+    <p>Valor Total: {{ caixa.valor_total }}</p>
+    <h2>Vendas Fechadas:</h2>
+    <ul>
+        {% for venda in vendas %}
+        <li>Venda ID: {{ venda.id }} - Valor: {{ venda.valor_total }}</li>
+        {% endfor %}
+    </ul>
+
+{%endblock%}

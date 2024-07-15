@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>Total de Vendas: {{ total_vendas }}</p>
+        <label for="valor_fechamento">Valor de Fechamento:</label>
+        <input type="text" name="valor_fechamento" required>
+        <button type="submit">Fechar Caixa</button>
+    </form>
+    
+
+{% endblock  %}

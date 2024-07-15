@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Caixa</title>
+</head>
+<body>
+    <h1>Relatório de Caixa</h1>
+    <ul>
+        {% for caixa in caixas_abertos %}
+            <li>Caixa {{ caixa.id }} - Funcionário: {{ caixa.funcionario.username }} - Valor Inicial: {{ caixa.valor_inicial }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

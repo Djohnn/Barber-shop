@@ -1,0 +1,23 @@
+{% extends 'caixa_base.html' %}
+
+{% block content %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+    <h1>Vendas a Receber</h1>
+    <ul class="list-group">
+        {% for venda in vendas %}
+            <li class="list-group-item">
+                <a href="{% url 'caixa:detalhes_venda' venda.id %}">
+                    {{ venda.agendamento.cliente.first_name }} {{ venda.agendamento.cliente.last_name }}
+                </a>
+                <a class="btn btn-primary" href="{% url 'caixa:receber_venda' venda.id %}">Receber Venda</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

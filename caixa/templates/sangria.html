@@ -1,0 +1,25 @@
+{% extends "caixa_base.html" %}
+
+
+{% block content %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+
+
+    <h1>Sangria</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="motivo">Motivo:</label>
+        <input type="text" name="motivo" id="motivo" required>
+        <label for="valor">Valor:</label>
+        <input type="number" name="valor" id="valor" required>
+        <button type="submit">Realizar Sangria</button>
+    </form>
+
+{% endblock  %}

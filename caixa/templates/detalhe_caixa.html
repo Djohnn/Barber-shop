@@ -1,0 +1,47 @@
+{% extends "caixa_base.html" %}
+
+
+{% block content %}
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+
+    <h1>Detalhe do Caixa</h1>
+    <p>Funcionário: {{ caixa.funcionario.username }}</p>
+    <p>Data de Abertura: {{ caixa.data_abertura }}</p>
+    <p>Valor Inicial: {{ caixa.valor_inicial }}</p>
+    <p>Valor Total: {{ caixa.valor_total }}</p>
+    <p>Status: {% if caixa.aberto %}Aberto{% else %}Fechado{% endif %}</p>
+    <p>Status: {{ caixa.aberto|yesno:"Aberto,Fechado" }}</p>
+
+    <h2>Sangrias</h2>
+    <ul>
+      {% for sangria in sangrias %}
+        <li>{{ sangria.data_hora }} - {{ sangria.valor }} - {{ sangria.motivo }}</li>
+      {% endfor %}
+    </ul>
+
+{% endblock  %}
+
+
+
+
+
+
+
+{% comment %} <p>Venda {{ venda.id }}</p>
+<p>Cliente: {{ venda.agendamento.user.username }}</p>
+<p>Serviço: {{ venda.agendamento.servico }}</p>
+<p>Produtos:</p>
+<ul>
+    {% for item in venda.vendaproduto_set.all %}
+        <li>{{ item.produto.nome }} - Quantidade: {{ item.quantidade }}</li>
+    {% endfor %}
+</ul>
+<p>Desconto: {{ venda.desconto }}</p>
+<p>Valor Total: {{ venda.valor_total }}</p>
+<p>Status: {{ venda.status_pagamento }}</p> {% endcomment %}

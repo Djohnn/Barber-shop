@@ -1,0 +1,32 @@
+{% extends "caixa_base.html" %}
+{% load multiply %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+    <section class="alert {{message.tags}}">
+        {{message}}
+    </section>
+{% endfor %}
+{% endif %}
+
+<h1>Detalhes da Venda</h1>
+    <p><strong>Cliente:</strong> {{ cliente }}</p>
+    <p><strong>Serviço:</strong> {{ servico }}- Valor: {{servico_valor}} -</p>
+    <p><strong>Barbeiro:</strong> {{ barbeiro }}</p>
+    <p><strong>Usuário que Recebeu:</strong> {{ usuario_recebedor }}</p>
+    <p><strong>Data de Recebimento:</strong> {{ data_recebimento }}</p>
+    <h3>Produtos:</h3>
+    <ul>
+        {% for produto_venda in produtos_venda %}
+        <li>
+            {{ produto_venda.produto.nome }} - Quantidade: {{ produto_venda.quantidade }} 
+            - Valor Unitário: {{ produto_venda.produto.preco_venda }} 
+            - Valor Total: {{ produto_venda.produto.preco_venda|multiply:produto_venda.quantidade }}
+        </li>
+        {% endfor %}
+    </ul>
+    <p><strong>Valor Total:</strong> {{ venda.valor_total }}</p>
+
+{% endblock  %}

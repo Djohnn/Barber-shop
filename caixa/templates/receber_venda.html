@@ -1,0 +1,91 @@
+{% extends "caixa_base.html" %}
+{% load multiply %}
+
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+
+    <h1>Receber Venda</h1>
+
+    {% if venda %}
+        <p><strong>Cliente:</strong> {{ cliente }}</p>
+        <p><strong>Serviço:</strong> {{ servico }} - Preço: R$ {{servico_valor}}</p>
+        <p><strong>Barbeiro:</strong> {{ barbeiro }}</p>
+        <h3>Produtos:</h3>
+        <ul>
+            {% for produto_venda in produtos_venda %}
+                <li>
+                    {{ produto_venda.produto.nome }} - Preço Unitário: R$ {{ produto_venda.produto.preco_venda }} 
+                    - Quantidade: {{ produto_venda.quantidade }} 
+                    - Valor Total: R$ {{ produto_venda.produto.preco_venda|multiply:produto_venda.quantidade }}
+                </li>
+            {% endfor %}
+        </ul>
+        <p><strong>Valor Total:</strong> {{ venda.valor_total }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <label for="forma_pagamento">Forma de Pagamento:</label>
+            <select name="forma_pagamento" id="forma_pagamento">
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão Débito">Cartão Débito</option>
+                <option value="Cartão Crédito">Cartão Crédito</option>
+                <option value="Pix">Pix</option>
+            </select>
+            <button type="submit">Receber Venda</button>
+        </form>
+    {% else %}
+        <p>Não há vendas a receber no momento.</p>
+    {% endif %}
+
+{% endblock %}
+
+
+
+{% comment %} {% extends "caixa_base.html" %}
+{% load multiply %}
+
+
+{% block content %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+
+    <h1>Receber Venda</h1>
+    <p><strong>Cliente:</strong> {{ cliente }}</p>
+    <p><strong>Serviço:</strong> {{ servico }}</p>
+    <p><strong>Barbeiro:</strong> {{ barbeiro }}</p>
+    <h3>Produtos:</h3>
+    <ul>
+        {% for produto_venda in produtos_venda %}
+        <li>
+            {{ produto_venda.produto.nome }} - Valor Unitário: {{ produto_venda.produto.preco_venda }} 
+             - Quantidade: {{ produto_venda.quantidade }} 
+            - Valor Total: {{ produto_venda.produto.preco_venda|multiply:produto_venda.quantidade }}
+        </li>
+        {% endfor %}
+    </ul>
+    <p><strong>Valor Total:</strong> {{ venda.valor_total }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <label for="forma_pagamento">Forma de Pagamento:</label>
+        <select name="forma_pagamento" id="forma_pagamento">
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cartão Débito">Cartão Débito</option>
+            <option value="Cartão Crédito">Cartão Crédito</option>
+            <option value="Pix">Pix</option>
+        </select>
+        <button type="submit">Receber Venda</button>
+    </form>
+
+{% endblock  %} {% endcomment %}

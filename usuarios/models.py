@@ -24,14 +24,3 @@ class Barbeiro(models.Model):
 
     def __str__(self):
         return self.nome
-
-# class Barbeiro(Users):
-#     bio = models.TextField(blank=True)
-#     especializacao = models.CharField(max_length=50, blank=True)
-#     foto = models.ImageField(upload_to='barbeiros', blank=True)
-#     telefone = models.CharField(max_length=20, blank=True)
-#     endereco = models.CharField(max_length=255, blank=True)
-#     nome = models.CharField(max_length=50) 
-   
-#     def __str__(self):
-#         return self.nome

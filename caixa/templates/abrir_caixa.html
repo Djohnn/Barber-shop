@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+    {% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
+
+
+    <h1>Abrir Caixa</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="valor_inicial">Valor Inicial:</label>
+        <input type="number" name="valor_inicial" step="0.01" required>
+        <button type="submit">Abrir Caixa</button>
+    </form>
+
+
+
+{% endblock  %}

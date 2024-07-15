@@ -232,3 +232,95 @@ inclusao
      
      abrir aquela venda
      reabrir venda
+
+
+me de uma dica de como ficaria uma estrutura de um app caixa em django de uma aplicação de uma barbearia onde nela tem:
+
+1º app usuarios onde todos usuarios cadastrado recebe tag de cliente com rolespermissions.
+apos cadastro eles sao redirecionada para um tela de agendamentos de horarios barbeiro e serviços.
+2º temos app cliente que somente intermedia o usuario cadastrado com o app agendamento.
+3ºtemos o app serviços onde cadastramos nossos serviços prestados, e nesses serviços os barbeiros recebem comissão.
+4º temos app estoque que faz cadastro de produtos, nome, preço de compra, preço de vendas, ultilizamos slugfy para gera nome unico para o produto.
+5º temos o app agendamento que por sua vez busca, dia, horario, barbeiro, e o serviço, 
+6º por fim temos o app vendas, que lista as vendas abertas, vendas fechadas, reabre uma venda concelada, e envia essas venda ao caixa fechando elas para pagamentos, cria uma venda, ao criar uma venda ele busca, um agendamento, que traz um serviço e um barbeiro pois ao finalizar a venda  e o caixa receber tem que gerar a comição do barbeiro, e temos a opção de vender produto para esse cliente e formas de pagamentos.
+
+→ dados essas informaçoes eu pensei em algo mais ou menos assim para o caixa dividido em 9 etapas e sub funçoes:
+
+1º login para abri caixa:
+    ○para identificar qual funcionario efetuo uma venda.
+    ○ so poderar abrir o caixa se efetuar logar e obrigatorio login
+    2º Abrir caixa: 
+    ○ so poderar efetuar qualquer um dessas operaçoes abaixo se o caixa tiver aberto. obrigatorio
+        3º vendas diaria:
+            ○ são as vendas recebido do app vendas
+        4º sangria:
+            ○ informar motivo da sangria, valor, e data e hora.
+        5º aplicar desconto em uma venda:
+            ○ exibir uma seleçao para separar desconto entre servicos, produtos, ou dar desconto sobre valor total. 
+        6º Receber uma venda: {
+            # vamos dividir isso em etapas.
+            ○ informaçoes da venda 
+                → cliente, servicos, barbeiro, agendamento, produto, valor produto, valor servico, valor total.
+            ○ informa modo de pagamento. 
+                → cartão Credito, cartão debito, dinheiro 
+            ○ quando toda venda for fechada e estiver com estatus pago tem que
+            gerar comissao do barbeiro o que vai ser exibido no template dele bucando,
+            valor do seviço, e nome do barbeiro que fez o serviço.
+            ○ incluir botão de finalizar venda,
+            ○ ao concluir a venda, perguntar se quer imprimir cupon fiscal e nao fical
+                →gera o cupon da venda para imprimir caso a resposta seja sim.
+            
+            }
+    7º fechar caixa
+        ○ para fechar o caixa tem que pegar o valor total de tudo que foi vendido somando venda que passou no 
+        cartão Credito, cartão debito, Dinheiro. 
+    8º relatorios de vendas.
+        ○ relatorio de venda opcional, comissao barbeiro, relatorio do dia, relario mensal e anual.    
+9º fazer tudo isso em uma template com as opção em uma barra de navegação. igual caixa de um supermercado, ou outra empresa.
+
+analisar minha estrutura e verificar se e viavel fazer dessa forma. quero que me oriente com uma nova estrutura ou 
+melhore a minha para ficar um app fluido e facil manutenção.
+
+caixa/
+views/
+__init__.py
+abrir_caixa.py
+vendas_diaria.py
+sangria.py
+receber_venda.py
+fechar_caixa.py
+models/
+__init__.py
+venda.py
+sangria.py
+comissao.py
+forms/
+__init__.py
+sangria_form.py
+venda_form.py
+templates/
+caixa/
+abrir_caixa.html
+vendas_diaria.html
+sangria.html
+receber_venda.html
+fechar_caixa.html
+urls.py
+__init__.py
+
+Login para abrir caixa: Ok, é importante identificar o funcionário que efetua a venda.
+Abrir caixa: Sim, é necessário ter um caixa aberto para efetuar operações.
+Vendas diária: Ok, é importante exibir as vendas recebidas do app vendas.
+Sangria: Ok, é importante registrar motivos, valores e datas/horas de sangria.
+Aplicar desconto em uma venda: Ok, é importante ter opções para aplicar descontos em serviços, produtos ou valor total.
+Receber uma venda: Ok, é importante ter informações da venda, modo de pagamento e gerar comissão do barbeiro.
+Fechar caixa: Ok, é importante calcular o valor total de tudo que foi vendido e fechar o caixa.
+Template com opções em uma barra de navegação: Ok, é importante ter uma interface fácil de usar para o funcionário.
+Melhorias
+
+Separe as funcionalidades em views: Em vez de ter uma única view para o caixa, separe as funcionalidades em views diferentes, como AbrirCaixaView, VendasDiariaView, SangriaView, etc. Isso tornará o código mais organizado e fácil de manter.
+Use forms para validar inputs: Use forms Django para validar inputs do usuário, como motivos de sangria, valores, etc.
+Use models para armazenar dados: Use models Django para armazenar dados de vendas, sangrias, comissões, etc.
+Use templates para exibir informações: Use templates Django para exibir informações de vendas, sangrias, comissões, etc.
+Adicione permissões e autenticação: Adicione permissões e autenticação para garantir que apenas funcionários autorizados possam acessar o caixa e efetuar operações.
+Considere usar uma estrutura de workflow: Considere usar uma estrutura de workflow para gerenciar o fluxo de operações no caixa, como abrir caixa, receber venda, fechar caixa, etc.

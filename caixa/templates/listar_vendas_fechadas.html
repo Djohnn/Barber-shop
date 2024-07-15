@@ -1,0 +1,12 @@
+{% extends "caixa_base.html" %}
+
+{% block content %}
+    <h1>Vendas Fechadas</h1>
+    <ul>
+        {% for venda in vendas_fechadas %}
+            <li>
+                <a href="{% url 'caixa:receber_venda' venda.id %}">Receber Venda -{{ venda.agendamento.cliente.first_name }} {{ venda.agendamento.cliente.last_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
