@@ -40,14 +40,14 @@ INSTALLED_APPS = [
     'usuarios',
     'rolepermissions',
     'agendamentos',
-    # 'crispy_forms',
-    # 'crispy_bootstrap5',
     'cliente',
     'estoque',
     'vendas',
     'servicos',
     'caixa',
     'relatorios',
+    'funcionarios',
+
     
 ]
 
@@ -143,6 +143,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Config auth
 AUTH_USER_MODEL = 'usuarios.Users'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 #config rolepermissions
 ROLEPERMISSIONS_MODULE = 'barbearia.roles'
@@ -159,3 +162,5 @@ MESSAGE_TAGS = {
     constants.INFO: 'alert-info',
     constants.WARNING: 'alert-warning',
 }
+
+LOGIN_URL = 'caixa:login_caixa'

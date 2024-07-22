@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Lista de Funcionários</h1>
+  <a href="{% url 'funcionarios:adicionar_funcionario' %}">Adicionar Funcionário</a>
+  <ul>
+    {% for funcionario in funcionarios %}
+      <li>{{ funcionario.username }} - {{ funcionario.get_cargo_display }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

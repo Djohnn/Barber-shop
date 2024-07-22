@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if messages %}
+  {% for message in messages %}
+      <section class="alert {{message.tags}}">
+          {{message}}
+      </section>
+  {% endfor %}
+  {% endif %}
+
+  <h1>Adicionar Funcionário</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar</button>
+  </form>
+{% endblock %}

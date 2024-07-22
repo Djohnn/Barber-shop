@@ -81,7 +81,7 @@ def add_produto(request):
         return redirect(reverse('estoque:add_produto'))       
     
 
-
+ 
 def produto(request, slug):
     produto = get_object_or_404(Produto, slug=slug)
     

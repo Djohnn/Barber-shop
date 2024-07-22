@@ -16,4 +16,5 @@ urlpatterns = [
     path('listar_vendas_caixa/', views.listar_vendas_caixa, name='listar_vendas_caixa'),
     path('vendas_fechadas/', views.listar_vendas_fechadas, name='listar_vendas_fechadas'),
     path('caixa/<int:caixa_id>/fechar/', views.fechar_caixa, name='fechar_caixa'),
+    path('login_caixa/', views.login_caixa, name='login_caixa'),
 ]

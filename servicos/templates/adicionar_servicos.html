@@ -5,6 +5,13 @@
 
 
 {% block content %}
+    <div class="container">{% if messages %}
+    {% for message in messages %}
+        <section class="alert {{message.tags}}">
+            {{message}}
+        </section>
+    {% endfor %}
+    {% endif %}
 
     <h1>Adicionar Serviço</h1>
     <form action="{% url 'servicos:adicionar_servicos' %}" method="post" enctype="multipart/form-data">
@@ -14,6 +21,10 @@
         <br>
         <label for="preco">Preço:</label>
         <input type="number" id="preco" name="preco" step="0.01" required><br>
+        <br>
+        <br>
+        <label for="preco">Comição</label>
+        <input type="number" id="comicao" name="comicao" step="0.01" required><br>
         <br>
         <label for="foto">Foto:</label>
         <input type="file" id="foto" name="foto" required><br>

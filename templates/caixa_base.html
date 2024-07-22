@@ -16,7 +16,7 @@
             <a href="{% url 'cliente:home' %}">Home</a>  
             <a href="{% url 'caixa:abrir_caixa' %}">Abertura Caixa</a>
             {% if caixa_aberto %}
-                <a href="{% url 'caixa:fechar_caixa' caixa.id %}">Fechar Caixa</a>
+                <a href="{% url 'caixa:fechar_caixa' caixa_aberto.id %}">Fechar Caixa</a>
                 <a href="{% url 'caixa:detalhe_caixa' caixa_aberto.id %}">Infomações Caixa</a><br>
                 <a href="{% url 'caixa:registrar_sangria' caixa_aberto.id %}">Sangria</a><br>
                 <a href="{% url 'caixa:vendas_diarias' %}">Vendas Diárias</a><br>

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Apagar Serviço</h2>
+  <p>Tem certeza que deseja apagar o serviço "{{ servico.nome }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Sim, apagar</button>
+  </form>
+  <a href="{% url 'servicos:listar_servicos' %}">Cancelar</a>
+{% endblock %}

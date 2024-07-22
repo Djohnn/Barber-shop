@@ -22,7 +22,6 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('usuarios.urls')),
-    #path('auth/dashboard/', include('usuarios.urls')),
     path('agendamentos/', include('agendamentos.urls')),
     path('cliente/', include('cliente.urls', namespace='cliente')),
     path('estoque/', include('estoque.urls')),
@@ -30,6 +29,7 @@ urlpatterns = [
     path('vendas/', include('vendas.urls')),
     path('caixa/', include('caixa.urls')),
     path('relatorios/', include('relatorios.urls')),
+    path('funcionarios/', include('funcionarios.urls'))
 ]  
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

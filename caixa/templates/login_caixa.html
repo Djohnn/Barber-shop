@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% if messages %}
+<ul>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+  <h1>Login do Caixa</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="username">Usuário:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Senha:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <input type="submit" value="Entrar">
+  </form>
+  
+{% endblock %}

@@ -35,10 +35,8 @@ def criar_agendamento(request):
             data=data,
             hora=hora,
             servico=servico,
-            status='Pendente'
+            status='agendado'
         )
-        servico.status = 'agendado'
-        servico.save()
         return redirect('cliente:home')
 
     return render(request, 'criar_agendamento.html', {

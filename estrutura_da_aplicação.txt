@@ -10,84 +10,92 @@ App Caixa
 App Relatórios 
 
 App Usuários
-Funções: Cadastro de usuários, atribuição de roles e permissions.
-Features:
-Cadastro de usuário
-Atribuição de roles (cliente, barbeiro, caixa)
-Login e autenticação
+    Funções: Cadastro de usuários, atribuição de roles e permissions.
+    Features:
+    Cadastro de usuário
+    Atribuição de roles (cliente, barbeiro, caixa)
+    Login e autenticação
 
 
 App Clientes
-Funções: Intermediação entre usuários e agendamentos.
-Features:
-Visualização e gerenciamento dos agendamentos do cliente
+    Funções: Intermediação entre usuários e agendamentos.
+    Features:
+    Visualização e gerenciamento dos agendamentos do cliente
 
 App Serviços
-Funções: Cadastro e gerenciamento de serviços prestados e comissões dos barbeiros.
-Features:
-Cadastro de serviços
-Gerenciamento de comissões dos barbeiros
+    Funções: Cadastro e gerenciamento de serviços prestados e comissões dos barbeiros.
+    Features:
+    Cadastro de serviços
+    Gerenciamento de comissões dos barbeiros
 
 App Estoque
-Funções: Cadastro e gerenciamento de produtos.
-Features:
-Cadastro de produtos
-Gerenciamento de estoque
+    Funções: Cadastro e gerenciamento de produtos.
+    Features:
+    Cadastro de produtos
+    Gerenciamento de estoque
 
 App Agendamentos
-Funções: Agendamento de serviços.
-Features:
-Agendamento de dia, horário, barbeiro e serviço
+    Funções: Agendamento de serviços.
+    Features:
+    Agendamento de dia, horário, barbeiro e serviço
 
 App Vendas
-Funções: Gestão de vendas, associando agendamentos e produtos.
-Features:
-Listagem de vendas abertas e fechadas
-Reabertura de vendas canceladas
-Envio de vendas para o caixa
-Criação de vendas associadas a agendamentos e produtos
+    Funções: Gestão de vendas, associando agendamentos e produtos.
+    Features:
+    Listagem de vendas abertas e fechadas
+    Reabertura de vendas canceladas
+    Envio de vendas para o caixa
+    Criação de vendas associadas a agendamentos e produtos
+
+app funcionarios
+    Funções: criar funcionarios do sistema.
+    Features:
+    criar funcionarios
+    atribuir funções
+    atribuir permissões
+    Listagem de funcionarios
 
 App Caixa
-Funções: Gestão do caixa, incluindo abertura, fechamento, sangria e recebimento de vendas.
-Features:
-1. Login para abrir caixa
-Identificação do funcionário que efetuou a venda
-Obrigatório login para abrir o caixa
-2. Abrir caixa
-Verificação de caixa aberto para permitir operações
-3. Vendas diárias
-Exibição das vendas recebidas do app Vendas
-4. Sangria
-Registro de motivo, valor, data e hora
-5. Aplicar desconto em uma venda
-Opções de desconto em serviços, produtos ou valor total
-6. Receber uma venda
-Exibição das informações da venda (cliente, serviços, barbeiro, agendamento, produtos, valores)
-Seleção do modo de pagamento (cartão de crédito, cartão de débito, dinheiro)
-Geração de comissão do barbeiro quando a venda estiver com status "pago"
-Botão de finalizar venda
-Pergunta sobre impressão de cupom fiscal ou não fiscal
-7. Fechar caixa
-Cálculo do valor total vendido, separando por método de pagamento
-8. Relatórios de vendas
-Relatórios opcionais: comissão dos barbeiros, vendas diárias, mensais e anuais
-App Relatórios (opcional)
-Funções: Gerenciamento e visualização de relatórios detalhados.
-Features:
-Relatório de vendas por período
-Relatório de comissões
-Relatórios personalizados
-Organização da Navegação no Template
-Barra de navegação com as opções de:
-Login para abrir caixa
-Abrir caixa
-Vendas diárias
-Sangria
-Aplicar desconto em venda
-Receber venda
-Fechar caixa
-Relatórios de vendas
-Estrutura de Pastas e Arquivos
+    Funções: Gestão do caixa, incluindo abertura, fechamento, sangria e recebimento de vendas.
+    Features:
+    1. Login para abrir caixa
+    Identificação do funcionário que efetuou a venda
+    Obrigatório login para abrir o caixa
+    2. Abrir caixa
+    Verificação de caixa aberto para permitir operações
+    3. Vendas diárias
+    Exibição das vendas recebidas do app Vendas
+    4. Sangria
+    Registro de motivo, valor, data e hora
+    5. Aplicar desconto em uma venda
+    Opções de desconto em serviços, produtos ou valor total
+    6. Receber uma venda
+    Exibição das informações da venda (cliente, serviços, barbeiro, agendamento, produtos, valores)
+    Seleção do modo de pagamento (cartão de crédito, cartão de débito, dinheiro)
+    Geração de comissão do barbeiro quando a venda estiver com status "pago"
+    Botão de finalizar venda
+    Pergunta sobre impressão de cupom fiscal ou não fiscal
+    7. Fechar caixa
+    Cálculo do valor total vendido, separando por método de pagamento
+    8. Relatórios de vendas
+    Relatórios opcionais: comissão dos barbeiros, vendas diárias, mensais e anuais
+    App Relatórios (opcional)
+    Funções: Gerenciamento e visualização de relatórios detalhados.
+    Features:
+    Relatório de vendas por período
+    Relatório de comissões
+    Relatórios personalizados
+    Organização da Navegação no Template
+    Barra de navegação com as opções de:
+    Login para abrir caixa
+    Abrir caixa
+    Vendas diárias
+    Sangria
+    Aplicar desconto em venda
+    Receber venda
+    Fechar caixa
+    Relatórios de vendas
+    Estrutura de Pastas e Arquivos
 
 project_root/
 │
@@ -156,6 +164,13 @@ project_root/
 │   │   ├── ...
 │   └── ...
 │
+├── funcionarios/ 
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── templates/
+│   │   ├── ...
+│   └── ...
 ├── templates/
 │   ├── base.html
 │   ├── navbar.html

@@ -1,6 +1,51 @@
 {% extends "caixa_base.html" %}
 {% load multiply %}
 
+{% comment %} {% block content %}
+  <h1>Receber Venda</h1>
+
+  <form method="post" action="{% url 'caixa:receber_venda' venda.id %}">
+    {% csrf_token %}
+    <div>
+      <label>Cliente:</label>
+      <p>{{ cliente }}</p>
+    </div>
+    <div>
+      <label>Serviço:</label>
+      <p>{{ servico }} - {{ servico_valor }}</p>
+    </div>
+    <div>
+      <label>Barbeiro:</label>
+      <p>{{ barbeiro }}</p>
+    </div>
+    <div>
+      <label>Produtos na Venda:</label>
+      <ul>
+        {% for produto_venda in produtos_venda %}
+          <li>{{ produto_venda.produto.nome }} ({{ produto_venda.quantidade }} x {{ produto_venda.preco_unitario }})</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <label for="forma_pagamento">Forma de Pagamento:</label>
+      <select name="forma_pagamento" id="forma_pagamento" required>
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="Cartão Débito">Cartão Débito</option>
+        <option value="Cartão Crédito">Cartão Crédito</option>
+        <option value="Pix">Pix</option>
+      </select>
+    </div>
+    <div>
+      <label for="imprimir">Deseja imprimir a venda?</label>
+      <input type="checkbox" name="imprimir" id="imprimir">
+    </div>
+    <button type="submit">Receber Venda</button>
+  </form>
+{% endblock %} {% endcomment %}
+
+
+
+
 {% block content %}
 
     {% if messages %}
@@ -44,48 +89,3 @@
     {% endif %}
 
 {% endblock %}
-
-
-
-{% comment %} {% extends "caixa_base.html" %}
-{% load multiply %}
-
-
-{% block content %}
-
-    {% if messages %}
-    {% for message in messages %}
-        <section class="alert {{message.tags}}">
-            {{message}}
-        </section>
-    {% endfor %}
-    {% endif %}
-
-    <h1>Receber Venda</h1>
-    <p><strong>Cliente:</strong> {{ cliente }}</p>
-    <p><strong>Serviço:</strong> {{ servico }}</p>
-    <p><strong>Barbeiro:</strong> {{ barbeiro }}</p>
-    <h3>Produtos:</h3>
-    <ul>
-        {% for produto_venda in produtos_venda %}
-        <li>
-            {{ produto_venda.produto.nome }} - Valor Unitário: {{ produto_venda.produto.preco_venda }} 
-             - Quantidade: {{ produto_venda.quantidade }} 
-            - Valor Total: {{ produto_venda.produto.preco_venda|multiply:produto_venda.quantidade }}
-        </li>
-        {% endfor %}
-    </ul>
-    <p><strong>Valor Total:</strong> {{ venda.valor_total }}</p>
-    <form method="post">
-        {% csrf_token %}
-        <label for="forma_pagamento">Forma de Pagamento:</label>
-        <select name="forma_pagamento" id="forma_pagamento">
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Cartão Débito">Cartão Débito</option>
-            <option value="Cartão Crédito">Cartão Crédito</option>
-            <option value="Pix">Pix</option>
-        </select>
-        <button type="submit">Receber Venda</button>
-    </form>
-
-{% endblock  %} {% endcomment %}

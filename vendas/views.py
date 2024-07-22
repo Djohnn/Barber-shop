@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from decimal import Decimal
 from django.http import JsonResponse
 from caixa.models import Caixa
+from django.db.models import Q
 
 def listar_vendas(request):
     vendas = Venda.objects.filter(status_pagamento='Em Aberto').select_related('barbeiro', 'agendamento')
@@ -131,7 +132,7 @@ def criar_ou_obter_venda(agendamento):
 
 def criar_venda(request):
     
-    agendamentos = Agendamento.objects.select_related('servico').filter(status='agendado')
+    agendamentos = Agendamento.objects.select_related('servico').filter(Q(status='agendado')  | Q(status='pendente'))
     produtos = Produto.objects.all()
     formas_pagamento = ['Dinheiro', 'Cartão Débito', 'Cartão Crédito', 'Pix']
     venda = None

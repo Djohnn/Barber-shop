@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Venda</title>
+</head>
+<body>
+    <h1>Venda</h1>
+    <p><strong>Cliente:</strong> {{ cliente }}</p>
+    <p><strong>Serviço:</strong> {{ servico }} - {{ servico_valor }}</p>
+    <p><strong>Barbeiro:</strong> {{ barbeiro }}</p>
+    <h2>Produtos na Venda</h2>
+    <ul>
+        {% for produto_venda in produtos_venda %}
+            <li>{{ produto_venda.produto.nome }} ({{ produto_venda.quantidade }} x {{ produto_venda.preco_unitario }})</li>
+        {% endfor %}
+    </ul>
+    <p><strong>Valor Total:</strong> {{ venda.valor_total }}</p>
+</body>
+</html>

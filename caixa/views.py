@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+# from .decorators import caixa_aberto_required
 from .models import Caixa, Desconto, Sangria
 from django.contrib.messages import constants
 from django. contrib import messages
-from .decorators import caixa_aberto_required
 from cliente.views import Agendamento
 from vendas.models import VendaProduto, Venda
 from django.utils import timezone
@@ -12,17 +13,39 @@ from usuarios.models import Users
 from decimal import Decimal
 
 
-@login_required
+
+# @login_required
 def listar_vendas_fechadas(request):
     vendas_fechadas = Venda.objects.filter(status_pagamento='Fechada').order_by('-data_hora_venda').select_related('barbeiro', 'agendamento')
     return render(request, 'listar_vendas_fechadas.html', {'vendas_fechadas': vendas_fechadas})
 
 
-@login_required
+# @login_required
 def listar_vendas_caixa(request):
     vendas = Venda.objects.filter(status_pagamento='Fechada').order_by('-data_hora_venda')
     return render(request, 'listar_vendas_caixa.html', {'caixa': vendas})
 
+def login_caixa(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username)
+        print(password)
+
+        if request.user.is_authenticated:
+            logout(request)
+        
+        funcionario = authenticate(username=username, password=password)
+
+        if funcionario:
+            login(request, funcionario)
+            messages.add_message(request, constants.SUCCESS, 'Usuario logado com sucesso!')
+            return redirect(reverse('caixa:abrir_caixa'))
+        
+        else:
+            messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos')
+            return render(request, 'login_caixa.html')
+    return render(request, 'login_caixa.html')
 
 @login_required
 def abrir_caixa(request):
@@ -31,19 +54,35 @@ def abrir_caixa(request):
         caixa = Caixa.objects.create(funcionario=request.user, valor_inicial=valor_inicial)
         messages.add_message(request, constants.SUCCESS, 'Caixa aberto com sucesso!')
         return redirect('caixa:detalhe_caixa', caixa_id=caixa.id)
-    return render(request, 'abrir_caixa.html')
+    else:
+        caixa_aberto = Caixa.objects.filter(funcionario=request.user, aberto=True).last()
+        if caixa_aberto:
+            return render(request, 'abrir_caixa.html')
+        else:
+            return redirect(reverse('caixa:login_caixa'))
+# @login_required
+# def abrir_caixa(request):
+#     if request.method == 'POST':
+#         valor_inicial = request.POST.get('valor_inicial')
+#         caixa = Caixa.objects.create(funcionario=request.user, valor_inicial=valor_inicial)
+#         messages.add_message(request, constants.SUCCESS, 'Caixa aberto com sucesso!')
+#         return redirect('caixa:detalhe_caixa', caixa_id=caixa.id)
+#     return render(request, 'abrir_caixa.html')
 
-@login_required
-@login_required
-def caixa_aberto(request, pk):
-    caixa = get_object_or_404(Caixa, pk=pk)
-    vendas = Venda.objects.filter(status_pagamento='Pago', data_hora_venda__gte=caixa.data_abertura)
-    caixa.atualizar_valor_total()
-    return render(request, 'caixa_aberto.html', {'caixa': caixa, 'vendas': vendas})
 
-@login_required
-@caixa_aberto_required
-@login_required
+# @login_required
+def caixa_aberto(request):
+    caixas_abertas = Caixa.objects.filter(funcionario=request.user, aberto=True)
+    if caixas_abertas:
+        caixa_aberto = caixas_abertas.last()
+        return {'caixa_aberto': caixa_aberto}
+    else:
+        return {'caixa_aberto': None}
+    
+
+
+# @caixa_aberto_required
+# @login_required
 def fechar_caixa(request, caixa_id):
     print("Entrou na função fechar_caixa")
     print("Request method:", request.method)
@@ -78,37 +117,18 @@ def fechar_caixa(request, caixa_id):
     
     print("Request não é POST")
     return render(request, 'fechar_caixa.html')
-# def fechar_caixa(request, caixa_id):
-#     caixa = Caixa.objects.get(id=caixa_id)
-#     if request.method == 'POST':
-#         caixa = Caixa.objects.filter(funcionario=request.user, aberto=True).last()
-#         if not caixa:
-#             messages.add_message(request, constants.ERROR, "Nenhum caixa aberto encontrado.")
-#             return redirect(reverse('caixa:abrir_caixa'))
-
-#         valor_fechamento = request.POST.get('valor_fechamento')
-#         print(valor_fechamento)
-#         try:
-#             caixa.fechar_caixa(valor_fechamento)
-#             messages.add_message(request, constants.SUCCESS, "Caixa fechado com sucesso!")
-#             return redirect(reverse('caixa:relatorios'))
-#         except ValueError as e:
-#             messages.add_message(request, constants.ERROR, str(e))
-#             return render(request, 'fechar_caixa.html', {'caixa': caixa})
-
-#     return render(request, 'fechar_caixa.html')
 
 
-@caixa_aberto_required
-@login_required
+# @caixa_aberto_required
+# @login_required
 def detalhe_caixa(request, caixa_id):
     caixa = Caixa.objects.get(id=caixa_id)
     sangrias = Sangria.objects.filter(caixa=caixa)
     return render(request, 'detalhe_caixa.html', {'caixa': caixa, 'sangrias': sangrias})
 
 
-@caixa_aberto_required
-@login_required
+# @caixa_aberto_required
+# @login_required
 def receber_venda(request, venda_id):
     print("Iniciando função receber_venda")
     try:
@@ -224,8 +244,8 @@ def receber_venda(request, venda_id):
 #         'produtos_venda': produtos_venda,
 #     })
 
-@login_required
-@caixa_aberto_required
+# @login_required
+# @caixa_aberto_required
 def aplicar_desconto(request):
     if request.method == 'POST':
         Desconto = request.POST.get('Desconto')
@@ -235,7 +255,8 @@ def aplicar_desconto(request):
     return render(request, 'aplicar_desconto.html')
 
 
-
+# @login_required
+# @caixa_aberto_required
 def sangria(request, caixa_id):
     caixa = Caixa.objects.filter(id=caixa_id, funcionario=request.user, aberto=True).first()
     if not caixa:
@@ -268,13 +289,13 @@ def sangria(request, caixa_id):
 
     return render(request, 'sangria.html', {'caixa': caixa})
 
-@login_required
-@caixa_aberto_required
+# @login_required
+# @caixa_aberto_required
 def vendas_diarias(request):
     vendas = Venda.objects.filter(status_pagamento='Pago')
     return render(request, 'vendas_diarias.html', {'vendas': vendas})
 
-@login_required
+# @login_required
 def detalhes_venda_caixa(request, venda_id):
     venda = get_object_or_404(Venda, id=venda_id)
 
