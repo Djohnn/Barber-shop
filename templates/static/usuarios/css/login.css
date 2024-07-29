@@ -20,9 +20,6 @@ body {
     color: #fff;
 }
 
-{% comment %} .small-header .main-header-container {
-    padding: 10px 0; /* Ajuste conforme necessário para reduzir o tamanho do header */
-} {% endcomment %}
 
 .login-container {
     background-color: rgba(0, 0, 0, 0.8);
@@ -47,7 +44,7 @@ body {
 .btn-primary {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #000;
     border: none;
     border-radius: 4px;
     color: white;
